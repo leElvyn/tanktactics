@@ -2,3 +2,5 @@
 __pycache__
 docker-compose.yml
 .env
+ttbot/.env
+ttdashboard/docker-compose.yml
