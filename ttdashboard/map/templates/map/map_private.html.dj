@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'map/private_map_static/leaflet.css' %}"
+    crossorigin=""/>
+    
+    <script src="{% static 'map/private_map_static/leaflet.js' %}"
+    crossorigin=""></script>
+    <script src="{% static 'map/private_map_static/AnimatedMarker.js' %}"></script>
+    <script src="{% static 'map/private_map_static/RotatedMarker.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'map/private_map_static/style.css' %}">
+
+    <script>
+    url = "/api/guild/{{ guild_id }}";
+    is_focused = {{ is_focused }};
+    {% autoescape off %}
+    focus = '{{ focus }}';
+    {% endautoescape %}
+    </script>
+    </head>
+
+    <body>
+        <div id="map"></div>
+    </body>
+    <script src="{% static 'map/private_map_static/script.js' %}"></script>
+</html>

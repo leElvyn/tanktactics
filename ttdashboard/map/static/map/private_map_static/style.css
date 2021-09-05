@@ -1,0 +1,15 @@
+
+.canvas_tile {
+    transition: all 2s ease-in-out;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+#map {
+    background-color: white;
+    margin: 0;
+    border: 0;
+    height: 640px;
+    width: 896px; 
+}
