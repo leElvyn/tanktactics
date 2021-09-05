@@ -26,6 +26,6 @@
         <div id="map"></div>
     </body>
     <script src="{% static 'map/public_map_static/script.js' %}"></script>
-    <script src="{% static 'map/public_map_static/socket.js' %}"></script>
     <script src="{% static 'map/public_map_static/actions.js' %}"></script>
+    <script src="{% static 'map/public_map_static/socket.js' %}"></script>
 </html>

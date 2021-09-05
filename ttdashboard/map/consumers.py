@@ -29,8 +29,9 @@ class ClientConsumer(AsyncWebsocketConsumer):
 
     async def shoot(self, event):
         await self.send(text_data=json.dumps({
-            'event': 'tank_shoot',
-            'data': event['data']
+            'event': 'shoot',
+            'data': event['data'],
+            'new_game_data': event["new_game_data"]
         }))
 
     async def move(self, event):

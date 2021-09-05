@@ -130,6 +130,7 @@ class Player(models.Model):
         deffensive_player.tank.save()
         deffensive_player.save()
         self.save()
+        broadcast_event(self.game_set.first(), "shoot", {"coordsStart": {"x": self.tank.x, "y": self.tank.y}, "coordsEnd": {"x": deffensive_player.tank.x, "y": deffensive_player.tank.y}, "newDeffenderHealth": deffensive_player.tank.health_points, "newAttackerActionPoints": self.tank.action_points, "deffenderRange": deffensive_player.tank.range})
         return reply
 
     def shoot_ap(self, deffensive_player, number_of_ap_to_shoot):

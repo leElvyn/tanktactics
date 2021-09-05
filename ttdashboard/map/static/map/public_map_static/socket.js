@@ -16,7 +16,12 @@ socket.onmessage = function (e) {
     console.log(event, data);
     switch (event) {
         case 'move':
+            mapDict = makeMapDict(newGameState.players);
             movePlayer(data.position, data.direction, data.newActionPoints, newGameState);
+            break;
+        case "shoot":
+            mapDict = makeMapDict(newGameState.players);
+            shootBullet(data.coordsStart, data.coordsEnd, data.newAttackerActionPoints, data.newDeffenderHealth, data.deffenderRange);
             break;
     };
 }

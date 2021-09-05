@@ -6,20 +6,51 @@ bullet = L.icon({
     popupAnchor: [0, -5],
 });
 
-function shootBullet(coordsStart, coordsEnd, newAttackerActionPoints, newDefenderHealth) {
+function regenerateTilesInRange(currentPosition, range) {
+    for (var j = -range; j <= range; j++) {
+        for (var k = -range; k <= range; k++) {
+            if (j == 0 && k == 0) {
+            }
+            else if (currentPosition.x + j < 0 || currentPosition.x + j > map_x || currentPosition.y + k < 0 || currentPosition.y + k > map_y) {
+            }
+            else {
+                var id = (currentPosition.x + j).toString() + "_" + (currentPosition.y + k).toString();
+                var tileDict = mapDict[id];
+                var canvas = document.getElementById(id);
+                if (canvas) {
+                    var ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    if (tileDict.ranges.length > 0) {
+                        ctx.globalAlpha = 0.2;
+                        tileDict.ranges.forEach(color => {
+                            ctx.fillStyle = color;
+                            ctx.fillRect(0, 0, 512, 512);
+                        });
+                    }
+                    if (tileDict.player != null) {
+                        drawPlayer(tileDict.player, ctx);
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+function shootBullet(coordsStart, coordsEnd, newAttackerActionPoints, newDefenderHealth, deffenderRange) {
     var deltaX = coordsStart.x - coordsEnd.x;
     var deltaY = coordsStart.y - coordsEnd.y;
     var angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
     // create the trajectory of the bullet
     var line = L.polyline([map.unproject([coordsStart.x * 64 + 32, coordsStart.y * 64 + 32], 4), map.unproject([coordsEnd.x * 64 + 32, coordsEnd.y * 64 + 32], 4)]);
-    
+
     //create the bullet
-    var marker = L.animatedMarker(line.getLatLngs(), { 
-    distance: 600000,
-    duration: 3,
-    icon: bullet,
-    rotationAngle: angle + 90,
-        onEnd: function() {
+    var marker = L.animatedMarker(line.getLatLngs(), {
+        distance: 600000,
+        duration: 3,
+        icon: bullet,
+        rotationAngle: angle + 90,
+        onEnd: function () {
             map.removeLayer(this);
             hurtAnimation(coordsEnd, 3, newDefenderHealth);
             if (newDefenderHealth <= 0) {
@@ -29,21 +60,22 @@ function shootBullet(coordsStart, coordsEnd, newAttackerActionPoints, newDefende
                 newCtx.clearRect(0, 0, newNode.width, newNode.height);
                 deadTile.parentNode.appendChild(newNode);
                 deadTile.style.opacity = 0;
-                setTimeout(function() {
+                setTimeout(function () {
                     deadTile.remove();
                 }, 2000);
+                regenerateTilesInRange(coordsEnd, deffenderRange);
             }
         }
     });
 
     map.addLayer(marker);
     marker._icon.style.display = 'none'; // the marker takes a bit less than a second to animate, hid it for now
-    setTimeout(function() {
+    setTimeout(function () {
         marker._icon.style.display = 'block'; // show the marker
         drawActionPoints(document.getElementById(coordsStart.x + "_" + coordsStart.y).getContext("2d"), newAttackerActionPoints); // override the attacker's action points
     }, 940);
 
-} 
+}
 
 function hurtAnimation(playerCoord, repeat, newDefenderHealth) {
     // keep track of the number of times we've repeated
@@ -58,8 +90,8 @@ function hurtAnimation(playerCoord, repeat, newDefenderHealth) {
         ctx.putImageData(original, 0, 0);
         ctx.globalAlpha -= 0.1;
         console.log(ctx.globalAlpha);
-        ctx.fillRect(0,0,512,512);
-        
+        ctx.fillRect(0, 0, 512, 512);
+
         if (ctx.globalAlpha <= 0.15) {
             ctx.putImageData(original, 0, 0);
             if (loops < repeat) {
@@ -74,17 +106,17 @@ function hurtAnimation(playerCoord, repeat, newDefenderHealth) {
             }
         }
         window.requestAnimationFrame(fadeOut);
-        
+
     }
 
     function fadeIn(timestamp) {
 
-        
+
         ctx.globalAlpha += 0.1;
         console.log(ctx.globalAlpha);
         ctx.putImageData(original, 0, 0);
-        ctx.fillRect(0,0,512,512);
-        
+        ctx.fillRect(0, 0, 512, 512);
+
         if (ctx.globalAlpha >= 0.5) {
             window.requestAnimationFrame(fadeOut);
             return
@@ -99,7 +131,7 @@ function movePlayer(currentPosition, direction, newActionPoints, newData) {
 
     var currentPlayer
     newData.players.forEach(player => {
-        if (player.tank.x == currentPosition.x + direction.x && player.tank.y == currentPosition.y+ direction.y) {
+        if (player.tank.x == currentPosition.x + direction.x && player.tank.y == currentPosition.y + direction.y) {
             currentPlayer = player;
         }
     });
@@ -108,7 +140,7 @@ function movePlayer(currentPosition, direction, newActionPoints, newData) {
 
     for (var i = 0; i < everyCanvas.length; i++) {
         var canvas = everyCanvas[i];
-        if (currentPosition.x + range >= canvas.getAttribute("x") && currentPosition.x - range <= canvas.getAttribute("x") && currentPosition.y + range >= canvas.getAttribute("y") && currentPosition.y - range <= canvas.getAttribute("y")) { 
+        if (currentPosition.x + range >= canvas.getAttribute("x") && currentPosition.x - range <= canvas.getAttribute("x") && currentPosition.y + range >= canvas.getAttribute("y") && currentPosition.y - range <= canvas.getAttribute("y")) {
             ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
@@ -131,8 +163,8 @@ function movePlayer(currentPosition, direction, newActionPoints, newData) {
 
     globalData = newData;
     console.log(newData);
-    
-    setTimeout(function() {
+
+    setTimeout(function () {
         newCtx.putImageData(canvasData, 0, 0);
         tile.remove();
         console.log(newActionPoints);

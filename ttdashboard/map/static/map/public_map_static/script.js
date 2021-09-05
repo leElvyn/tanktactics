@@ -147,14 +147,7 @@ function markPlayersRanges(players, mapDict, excluded_coordinates= [{x: -1, y: -
 
     });
 }
-
-fetch(url).then(res => res.json()).then(data => {
-    console.log(data);
-    window.globalData = data;
-    //createSocket(data.id);
-    map_x = data.grid_size_x;
-    map_y = data.grid_size_y;
-
+function makeMapDict(dataPlayers) {
     mapDict = {};
     // this is the dict that contains the map. We first populate the dict with every cell as empty
     // this is for heavy optimization reasons, so we can only load the cells that are viewed on the map
@@ -168,8 +161,20 @@ fetch(url).then(res => res.json()).then(data => {
             }
         }
     }
-    markPlayers(data.players, mapDict);
-    markPlayersRanges(data.players, mapDict);
+    markPlayers(dataPlayers, mapDict);
+    markPlayersRanges(dataPlayers, mapDict);
+    return mapDict;
+}
+
+fetch(url).then(res => res.json()).then(data => {
+    console.log(data);
+    window.globalData = data;
+    createSocket(data.id);
+    map_x = data.grid_size_x;
+    map_y = data.grid_size_y;
+
+    mapDict = makeMapDict(data.players);
+
     L.GridLayer.MapTile = L.GridLayer.extend({
         createTile: function (coords) {
             var canvas = document.createElement('canvas');
