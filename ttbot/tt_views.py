@@ -188,9 +188,9 @@ class NearPlayerSelect(Select):
             if resp.status == 200:
                 self.view.disable_all_selects()
                 await interaction.response.send_message("Bang.\n")
-                log_message = f"{ctx.author.mention} attacked {self.values[0]}."
+                log_message = f"{ctx.author.mention} attacked {self.values[0]}.\n"
                 if reply["deffensive_player_dead"]:
-                    log_message += self.values[0] + " is now dead. "
+                    log_message += "<@" + self.values[0] + "> is now dead.\n"
                 else:
                     log_message += self.values[0] + " now has " + str(reply["deffender_health"]) + " reaming health points."
                 await cog.log(self.view.game, log_message)

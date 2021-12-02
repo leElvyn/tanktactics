@@ -10,6 +10,9 @@ import asyncio
 import inspect
 import datetime
 import os
+import gettext
+
+_ = gettext.gettext
 
 class TankTactics(commands.Cog):
     def __init__(self, bot):
@@ -72,13 +75,13 @@ class TankTactics(commands.Cog):
         async with self.session.get(self.get_api_url(f'guild/{guild_id}/players/{player_id}')) as response:
             print(response)
             if response.status == 404:
-                await ctx.send("You are not in the game")
+                await ctx.respond("You are not in the game")
                 return 404
             player = await response.json()
             if player["is_dead"] == True:
-                await ctx.send("You are dead")
+                await ctx.respond("You are dead")
             if player["tank"]["action_points"] <= 0:
-                ## await ctx.send("You are out of action points.")
+                ## await ctx.respond("You are out of action points.")
                 # here, is_disabled is true
                 return (player, True)
         return (player, False)
@@ -96,11 +99,19 @@ class TankTactics(commands.Cog):
             game = await response.json()
         return game
 
+    async def create_player(self, guild_id, player: discord.Member):
+        async with self.session.post(self.get_api_url(f"guild/{guild_id}/players/create"), json={"player_id": player.id, "name": player.name, "avatar_url": player.avatar.url}) as response:
+            print(response)
+            if response.status == 201:
+                return True
+            else:
+                return False
+
     async def log(self, game, message):
         channel = self.bot.get_channel(game["logs_channel"])
-        await channel.send(message)
+        await channel.respond(message)
 
-    @commands.command()
+    @commands.slash_command()
     async def move(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         if data == 404:
@@ -109,16 +120,16 @@ class TankTactics(commands.Cog):
         url = await self.generate(ctx.author.id)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
-        embed = discord.Embed(title="Current game state :")
+        embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
         view = tt_views.MoveView(self, ctx, data, game)
 
-        message = await ctx.send(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
         await view.wait()
         await message.edit(view=view)
 
 
-    @commands.command()
+    @commands.slash_command()
     async def shoot(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         if data == 404:
@@ -126,20 +137,20 @@ class TankTactics(commands.Cog):
         
         url = await self.generate(ctx.author.id)
 
-        embed = discord.Embed(title="Current game state :")
+        embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
 
         view = tt_views.ShootView(self, ctx, data, game, is_friendly=False)
 
-        message = await ctx.send(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
 
         await view.wait()
         await message.edit(view=view)
 
 
-    @commands.command()
+    @commands.slash_command()
     async def transfer(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         if data == 404:
@@ -147,18 +158,18 @@ class TankTactics(commands.Cog):
 
         url = await self.generate(ctx.author.id)
 
-        embed = discord.Embed(title="Current game state :")
+        embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
 
         view = tt_views.ShootView(self, ctx, data, game, is_friendly=True)
 
-        message = await ctx.send(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
         await view.wait()
         await message.edit(view=view)
 
-    @commands.command()
+    @commands.slash_command()
     async def upgrade(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         if data == 404:
@@ -166,19 +177,19 @@ class TankTactics(commands.Cog):
         
         url = await self.generate(ctx.author.id)
 
-        embed = discord.Embed(title="Current game state :")
+        embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
 
         view = tt_views.UpgradeRangeView(self, ctx, data, game)
 
-        message = await ctx.send(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
         await view.wait()
         await message.edit(view=view)
 
 
-    @commands.command()
+    @commands.slash_command(guild_ids=[881617981346578483])
     async def game(self, ctx):
         print("t")
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
@@ -187,42 +198,50 @@ class TankTactics(commands.Cog):
         
         url = await self.generate(ctx.author.id)
 
-        embed = discord.Embed(title="Current game state :")
+        embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
 
         view = tt_views.GameOverviewView(self, ctx, data)
 
-        message = await ctx.send(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
         await view.wait()
         await message.edit(view=view)
 
+    @commands.slash_command(guild_ids=[881617981346578483])
+    async def register(self, ctx: discord.ApplicationContext):
+        print("t")
+        if not await self.create_player(ctx.guild.id, ctx.author):
+            await ctx.respond("You are already registered")
+        else:
+            await ctx.respond("You are now registered")
 
-    @commands.command()
+
+    @commands.slash_command()
     async def vote(self, ctx, player: discord.Member):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         target = await self.fetch_player(ctx, player.id, ctx.guild.id)
         game = await self.fetch_game(ctx, ctx.guild.id)
 
         if data == 404:
-            await ctx.send("You are not in the game.")
+            await ctx.respond("You are not in the game.", ephemeral=True)
             return
         
         if target == 404:
-            await ctx.send("The player you're trying to vote for isn't in the game.")
+            await ctx.respond("The player you're trying to vote for isn't in the game.", ephemeral=True)
             return
 
         if target["is_dead"] == True:
-            await ctx.send("The player you're trying to vote for is dead.")
+            await ctx.respond("The player you're trying to vote for is dead.", ephemeral=True)
             return
 
         if data["is_dead"] == False:
-            await ctx.send("Only dead players can vote.")
+            await ctx.respond("Only dead players can vote.", ephemeral=True)
             return
 
         if data["ad_vote"] != None:
-            await ctx.send("You already voted today.")
+            await ctx.respond("You already voted today.", ephemeral=True)
             return
 
         url = self.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "vote"
@@ -230,6 +249,6 @@ class TankTactics(commands.Cog):
         async with self.session.get(url, json=data) as resp:
             reply = await resp.json()
             if resp.status == 200:
-                await ctx.send("Vote done.\n")
+                await ctx.respond("Vote done.\n")
                 await self.log(game, f"{data['name']} voted for {target['name']}. {target['name']} now has {reply['vote_number']} votes today.")
         
