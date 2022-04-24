@@ -1,3 +1,4 @@
+final_ready = false;
 var heartRed = new Image();
 heartRed.src = "/static/map/public_map_static/assets/heart-red.png"
 
@@ -182,9 +183,11 @@ fetch(url).then(res => res.json()).then(data => {
                 zoom = 6.5 - Math.sqrt(range);
                 var latlng = map.unproject([location_focus.x * 64 + 32, location_focus.y * 64 + 32], 4);
                 map.setView(latlng, zoom);
+                final_ready = true;
             }
             else {
                 map.setView(map.unproject([(map_x / 2 + 1) * 64 + 32, (map_y / 2 + 1) * 64 + 32], 4), 3);
+                final_ready = true;
             }
         });
     }

@@ -17,7 +17,7 @@ class GameAdmin(admin.ModelAdmin):
     fieldsets = [
         ("Guild informations", {'fields': ['guild_id', 'game_talk_channel', 'commands_channel', "logs_channel"]}),
         ("Players", {'fields': ['players']}),
-        ("Game settings", {'fields': [ 'allowed_joining', 'max_players', 'grid_size_x', "grid_size_y", "ad_duration", "game_start_date"]}),
+        ("Game settings", {'fields': [ 'allowed_joining', 'max_players', 'grid_size_x', "grid_size_y", "ad_duration", "game_start_date", "is_action_day_1d"]}),
         ("Game status", {'fields': ["is_started", "is_ended", "next_ad_end"]}),
     ]
     inlines = [PlayerInline]

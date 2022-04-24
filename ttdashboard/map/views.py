@@ -159,7 +159,7 @@ def create_game(request, guild_id):
 
 @api_view(['GET'])
 def get_game(request, guild_id):
-    game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
+    game = Game.objects.filter(guild_id=guild_id).order_by("game_start_date").first()
     if not game:
         raise Http404("Game does not exist")
     game_json = GameSerializer(game)
@@ -251,7 +251,7 @@ def upgrade_player(request, guild_id, discord_id):
         return JsonResponse({"error": "Game not started"}, status=400)
     player = game.players.filter(discord_id=discord_id).first()
     settings = JSONParser().parse(request)
-    reply = player.upgrade_range(settings["upgrade_size"])
+    reply = player.upgrade_range()
     return JsonResponse(reply, status=200)
 
 @api_view(["GET"])
@@ -296,4 +296,4 @@ def private_map(request, guild_id):
     return render(request, 'map/map_private.html.dj', context)
 
 def redirect_map(request):
-    return redirect('/guild/881617981346578483')
+    return redirect('/guild/613018525111549953')

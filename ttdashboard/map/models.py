@@ -98,8 +98,10 @@ class Player(models.Model):
         self.tank.y = y
         self.tank.save()
         self.save()
-        broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y},"newActionPoints": self.tank.action_points})
-
+        try:
+            broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y},"newActionPoints": self.tank.action_points})
+        except:
+            pass
     def shoot(self, deffensive_player):
         reply = {"deffensive_player_dead" : False}
 
@@ -160,11 +162,12 @@ class Player(models.Model):
         }
         return reply
 
-    def upgrade_range(self, upgrade_size):
-        if self.tank.action_points < upgrade_size:
+    def upgrade_range(self):
+        upgrade_cost = self.tank.range - 1
+        if self.tank.action_points < upgrade_cost:
             raise Exception(_('Player does not have enough action points'))
-        self.tank.action_points -= upgrade_size
-        self.tank.range += upgrade_size
+        self.tank.action_points -= upgrade_cost
+        self.tank.range += 1
         event = RangeUpgradeEvent(game=self.game_set.first() , player=self, new_range=self.tank.range)
         event.save()
         self.tank.save()
@@ -183,13 +186,13 @@ class Player(models.Model):
 
         self.ad_vote = player
         self.save()
-        if player.ad_vote_set.all().count() == 3:
+        if Player.objects.filter(ad_vote=player).count() == 3:
             player.tank.action_points += 1
             player.tank.save()
         self.save()
         player.save()
         reply = {
-            "vote_number": player.ad_vote_set.all().count()
+            "vote_number": Player.objects.filter(ad_vote=player).count()
         }
         return reply
     
