@@ -2,3 +2,4 @@
 __pycache__
 
 ttdashboard/data
+ttbot/.env
