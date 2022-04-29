@@ -3,3 +3,5 @@ __pycache__
 
 ttdashboard/data
 ttbot/.env
+
+ttdashboard/docker-compose.yml
