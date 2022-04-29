@@ -52,20 +52,18 @@ class TankTactics(commands.Cog):
 
     async def generate(self, focus_id):
         page = await self.browser.newPage()
-        await page.setViewport({"width":896, "height":640})
+        await page.setViewport({"width":1024, "height":1024})
 
         page.on("console", lambda message: print(message.text))
-        await page.goto(f'https://tank-tactics.com/map/guild/613018525111549953?focus_player_id={focus_id}')
-        await asyncio.sleep(0.5) #it sometimes blur, making sure it REALLy is loaded
-        await page.waitForFunction("final_ready == true;")
+        await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333?focus_player_id={focus_id}')
         await asyncio.sleep(0.5) #it sometimes blur, making sure it REALLy is loaded
 
         image_name = str(datetime.datetime.utcnow().timestamp())
         image_name = image_name.replace('.', '-') # to avoid problems with dots in file names
         image_name += '.png'
-        image_path = os.getcwd() + '/tanktactics/static/staticmaps/' + image_name
+        image_path = os.getcwd() + '/static/staticmaps/' + image_name
         print(image_path)
-        await page.screenshot({'path': image_path, "width":896, "height":640})
+        await page.screenshot({'path': image_path, "width":896, "height":896})
         await page.close()
         image_bin = open(image_path, 'rb')
 

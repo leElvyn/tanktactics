@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { TILE_SIZE } from "./script.js";
 var heartRed = new Image();
-heartRed.src = "/static/map/public_map_static/assets/heart-red.png"
+heartRed.src = "/static/map/map_static/assets/heart-red.png";
 var heartBlack = new Image();
-heartBlack.src = "/static/map/public_map_static/assets/heart-black.png"
+heartBlack.src = "/static/map/map_static/assets/heart-black.png";
 export function drawMap(map, game) {
     return __awaiter(this, void 0, void 0, function* () {
         yield fetchGame();

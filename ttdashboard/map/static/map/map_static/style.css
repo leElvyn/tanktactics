@@ -47,7 +47,7 @@ body {
 
 .range {
   position: absolute;
-  border: 3px solid black;
+  border: 3px solid rgb(27, 27, 27);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   z-index: 1;

@@ -292,6 +292,7 @@ def private_map(request, guild_id):
     if player_id:
         player = Player.objects.get(discord_id=player_id)
         context["focus"] = f'{{"x": {player.tank.x}, "y": {player.tank.y}, "range": {player.tank.range}}}'
+        print(context["focus"])
         context["is_focused"] = "true"
     return render(request, 'map/map_private.html.dj', context)
 

@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{% static 'map/public_map_static/style.css' %}">
+    <link rel="stylesheet" href="{% static 'map/map_static/style.css' %}">
     <body>
         <div id="background">
             <div id="map"></div>
@@ -12,11 +12,10 @@
     </body>
     <script>
     url = "/api/guild/{{ guild_id }}";
-    public = {{ public }};
+    is_public = {{ public }};
     is_focused = {{ is_focused }};
     focus = '{{ focus }}';
-    
     </script>
     </head>
-    <script src="{% static 'map/public_map_static/script.js' %}" type="module"></script>
+    <script src="{% static 'map/map_static/script.js' %}" type="module"></script>
 </html>

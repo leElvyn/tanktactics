@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+      "target": "es2015",
+      "module": "es2015",
+      "sourceMap": true,
+      "allowSyntheticDefaultImports": true,
+      "outDir": "./../ttdashboard/map/static/map/map_static",
+    }
+}

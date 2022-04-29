@@ -11,6 +11,7 @@ import { registerGestures } from "./mapMouvement.js";
 import { drawMap, fetchGame } from "./mapDrawing.js";
 import { registerInteractions } from "./mapInteractions.js";
 import { createSocket } from "./socket.js";
+import { focusMap } from "./privateMap.js";
 export const TILE_SIZE = 50;
 var map = document.getElementById("map");
 var game;
@@ -20,7 +21,14 @@ function main(map) {
         game = yield fetchGame();
         yield drawMap(map, game);
         yield registerInteractions(map);
-        yield createSocket(game, map);
+        // @ts-ignore
+        if (is_public) {
+            yield createSocket(game, map);
+        }
+        // @ts-ignore
+        if (is_focused) {
+            focusMap(map, game.grid_size_x, game.grid_size_y);
+        }
     });
 }
 main(map);

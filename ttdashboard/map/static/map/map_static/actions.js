@@ -23,5 +23,6 @@ export function movePlayer(event) {
         window.requestAnimationFrame(animatePlayerMove);
     }
 }
-export function shootPlayer() { }
+export function shootPlayer() {
+}
 //# sourceMappingURL=actions.js.map

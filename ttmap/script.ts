@@ -3,7 +3,7 @@ import { drawMap, fetchGame } from "./mapDrawing.js";
 import { registerInteractions } from "./mapInteractions.js"
 import { createSocket } from "./socket.js";
 import { Game } from "./interfaces.js";
-import { movePlayer } from "./actions.js";
+import { focusMap } from "./privateMap.js";
 
 export const TILE_SIZE = 50;
 
@@ -18,7 +18,14 @@ async function main(map: HTMLElement) {
     
     await registerInteractions(map)
 
-    await createSocket(game, map)
+    // @ts-ignore
+    if (is_public) {
+        await createSocket(game, map)
+    }
+    // @ts-ignore
+    if (is_focused) {
+        focusMap(map, game.grid_size_x, game.grid_size_y)
+    }
 }
 
 main(map)
