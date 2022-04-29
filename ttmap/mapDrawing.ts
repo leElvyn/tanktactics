@@ -2,10 +2,10 @@ import { Game, Player } from "./interfaces";
 import { TILE_SIZE } from "./script.js";
 
 var heartRed = new Image();
-heartRed.src = "assets/heart-red.png"
+heartRed.src = "/static/map/map_static/assets/heart-red.png"
 
 var heartBlack = new Image();
-heartBlack.src = "assets/heart-black.png"
+heartBlack.src = "/static/map/map_static/assets/heart-black.png"
 
 
 export async function drawMap(map: HTMLElement, game) {
