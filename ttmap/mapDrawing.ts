@@ -55,6 +55,9 @@ function drawGrid(map: HTMLElement, game: Game) {
 function drawPlayers(map: HTMLElement, game: Game) {
     for (let i = 0; i < game.players.length; i++) {
         let player = game.players[i]
+        if (player.is_dead) {
+            continue
+        }
         let tile = document.getElementById("tile_" + player.tank.x.toString() + "_" + player.tank.y.toString())
         let canvas = drawPlayer(player)
         canvas.id = "player_" + player.tank.x.toString() + "_" + player.tank.y.toString()
@@ -128,6 +131,9 @@ function centerMap(map: HTMLElement) {
 function drawRangeRepresentations(map: HTMLElement, game: Game) {
     for (let i = 0; i < game.players.length; i++) {
         let player = game.players[i]
+        if (player.is_dead) {
+            continue
+        }
         let rangeDiv = drawRangeRepresentation(player.tank.range, player.player_color);
         let range = player.tank.range
         rangeDiv.style.left = (player.tank.x - range) * TILE_SIZE + "px"
