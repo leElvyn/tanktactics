@@ -232,6 +232,7 @@ class TankTactics(commands.Cog):
             return
         target = target[0]
         data = data[0]
+
         if target["is_dead"] == True:
             await ctx.respond("The player you're trying to vote for is dead.", ephemeral=True)
             return
@@ -245,10 +246,11 @@ class TankTactics(commands.Cog):
             return
 
         url = self.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "vote"
-        data = {"target_id": player.id}
-        async with self.session.get(url, json=data) as resp:
+        json_data = {"target_id": player.id}
+        async with self.session.get(url, json=json_data) as resp:
             reply = await resp.json()
             if resp.status == 200:
+                print(data, target)
                 await ctx.respond("Vote done.\n")
-                await self.log(game, f"{data['name']} voted for {target['name']}. {target['name']} now has {reply['vote_number']} votes today.")
+                await self.log(game, f"{data['name']} voted for {target['name']}.\n{target['name']} now has {reply['vote_number']} vote(s) today.")
         
