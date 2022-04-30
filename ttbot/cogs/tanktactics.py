@@ -51,9 +51,12 @@ class TankTactics(commands.Cog):
     async def generate(self, focus_id):
         page = await self.browser.newPage()
         await page.setViewport({"width":1024, "height":1024})
+        if focus_id != False:
+            await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333?focus_player_id={focus_id}')
+        else:
+            await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333')
 
-        await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333?focus_player_id={focus_id}')
-        await asyncio.sleep(0.5) #it sometimes blur, making sure it REALLy is loaded
+        await asyncio.sleep(0.3) #it sometimes blur, making sure it REALLy is loaded
 
         image_name = str(datetime.datetime.utcnow().timestamp())
         image_name = image_name.replace('.', '-') # to avoid problems with dots in file names
@@ -74,6 +77,8 @@ class TankTactics(commands.Cog):
             player = await response.json()
             if player["is_dead"] == True and run_checks:
                 await ctx.respond("You are dead")
+                return False
+
             if player["tank"]["action_points"] <= 0:
                 ## await ctx.respond("You are out of action points.")
                 # here, is_disabled is true
@@ -113,6 +118,8 @@ class TankTactics(commands.Cog):
         url = await self.generate(ctx.author.id)
 
         game = await self.fetch_game(ctx, ctx.guild.id)
+        if not game:
+            return
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
         view = tt_views.MoveView(self, ctx, data, game)
@@ -125,7 +132,7 @@ class TankTactics(commands.Cog):
     @commands.slash_command()
     async def shoot(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
-        if data == 404:
+        if data == False:
             return
         
         url = await self.generate(ctx.author.id)
@@ -165,7 +172,7 @@ class TankTactics(commands.Cog):
     @commands.slash_command()
     async def upgrade(self, ctx):
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
-        if data == 404:
+        if not data:
             return
         
         url = await self.generate(ctx.author.id)
@@ -184,22 +191,23 @@ class TankTactics(commands.Cog):
 
     @commands.slash_command()
     async def game(self, ctx):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
-        if data == 404:
-            return
-        
-        url = await self.generate(ctx.author.id)
+        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id, False)
+        if not data:
+            url = await self.generate(False)
+        else:
+            url = await self.generate(ctx.author.id)
+
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
+        if not data:
+            view = tt_views.GameOverviewView(self, ctx, data)
+            await ctx.respond(embed=embed, view=view)
+        else:
+            await ctx.respond(embed=embed)
 
-        game = await self.fetch_game(ctx, ctx.guild.id)
 
-        view = tt_views.GameOverviewView(self, ctx, data)
 
-        message = await ctx.respond(embed=embed, view=view)
-        await view.wait()
-        await ctx.interaction.response.edit_message(view=view)
 
     @commands.slash_command(guild_ids=[613018525111549953])
     async def register(self, ctx: discord.ApplicationContext):
