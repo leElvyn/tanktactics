@@ -52,7 +52,6 @@ class TankTactics(commands.Cog):
         page = await self.browser.newPage()
         await page.setViewport({"width":1024, "height":1024})
 
-        page.on("console", lambda message: print(message.text))
         await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333?focus_player_id={focus_id}')
         await asyncio.sleep(0.5) #it sometimes blur, making sure it REALLy is loaded
 
@@ -60,7 +59,6 @@ class TankTactics(commands.Cog):
         image_name = image_name.replace('.', '-') # to avoid problems with dots in file names
         image_name += '.png'
         image_path = os.getcwd() + '/static/staticmaps/' + image_name
-        print(image_path)
         await page.screenshot({'path': image_path, "width":1024, "height":1024})
         await page.close()
         image_bin = open(image_path, 'rb')
@@ -70,12 +68,10 @@ class TankTactics(commands.Cog):
 
     async def fetch_player(self, ctx, player_id, guild_id, run_checks=True):
         async with self.session.get(self.get_api_url(f'guild/{guild_id}/players/{player_id}')) as response:
-            print(response)
             if response.status == 404:
                 await ctx.respond("You are not in the game")
                 return 404
             player = await response.json()
-            print(player)
             if player["is_dead"] == True and run_checks:
                 await ctx.respond("You are dead")
             if player["tank"]["action_points"] <= 0:
@@ -99,14 +95,12 @@ class TankTactics(commands.Cog):
 
     async def create_player(self, guild_id, player: discord.Member):
         async with self.session.post(self.get_api_url(f"guild/{guild_id}/players/create"), json={"discord_id": player.id, "name": player.name, "avatar_url": player.avatar.url}) as response:
-            print(response)
             if response.status == 201:
                 return True
             else:
                 return False
 
     async def log(self, game, message):
-        print(game)
         channel = self.bot.get_channel(game["logs_channel"])
         await channel.send(message)
 
@@ -190,7 +184,6 @@ class TankTactics(commands.Cog):
 
     @commands.slash_command()
     async def game(self, ctx):
-        print("t")
         data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
         if data == 404:
             return
@@ -210,7 +203,6 @@ class TankTactics(commands.Cog):
 
     @commands.slash_command(guild_ids=[613018525111549953])
     async def register(self, ctx: discord.ApplicationContext):
-        print("t")
         if not await self.create_player(ctx.guild.id, ctx.author):
             await ctx.respond("You are already registered")
         else:
