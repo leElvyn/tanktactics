@@ -5,7 +5,6 @@ from discord.interactions import Interaction
 from discord.ui import Button, View, Select
 from discord.components import ActionRow
 from discord import ButtonStyle, SelectOption, SelectMenu
-from discord import ApplicationContext
 
 def get_distance(tank_offender, tank_deffender):
     """return the distance between the 2 tanks"""
@@ -63,7 +62,7 @@ class ArrowButton(Button):
             return
         cog = self.view.cog
         ctx = self.view.ctx
-        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id)
+        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id)
         current_coordinates = {}
         # we start by getting the current users's coordinates
         async with cog.session.get(url) as resp:
@@ -86,7 +85,7 @@ class ArrowButton(Button):
             if resp.status != 200:
                 raise Exception("Error while moving tank")
         await interaction.response.send_message(f"You moved your tank to {current_coordinates['x']}/{current_coordinates['y']}")
-        await cog.log(self.view.game, f"<@{ctx.author.id}> moved his tank to {current_coordinates['x']}/{current_coordinates['y']}") 
+        await cog.log(self.view.game, f"<@{ctx.user.id}> moved his tank to {current_coordinates['x']}/{current_coordinates['y']}") 
         self.view.disable_all_arrows()
         self.view.stop()
 
@@ -199,8 +198,8 @@ class NearPlayerSelect(Select):
             return 
 
         cog = self.view.cog
-        ctx: ApplicationContext = self.view.ctx
-        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "attack"
+        ctx = self.view.ctx
+        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "attack"
         data = {"deffender_id": self.values[0]}
         target_member = await ctx.guild.fetch_member(self.values[0])
         print(target_member)
@@ -209,7 +208,7 @@ class NearPlayerSelect(Select):
             if resp.status == 200:
                 self.view.disable_all_selects()
                 await interaction.response.send_message("Bang.\n")
-                log_message = f"<@{ctx.author.id}> attacked <@{target_member.id}>.\n"
+                log_message = f"<@{ctx.user.id}> attacked <@{target_member.id}>.\n"
                 if reply["deffensive_player_dead"]:
                     log_message += f"<@{self.values[0]}> is now dead. "
                 else:
@@ -243,9 +242,9 @@ class MoveView(View):
     author = None
     game = None
     
-    def __init__(self, cog_object, ctx, player_data, game_data):
+    def __init__(self, cog_object, ctx: Interaction, player_data, game_data):
         super().__init__(timeout=500)
-        self.author = ctx.author
+        self.author = ctx.user
         self.cog = cog_object
         self.ctx = ctx
         self.game = game_data
@@ -289,7 +288,7 @@ class ShootView(View):
         super().__init__(timeout=500)
         self.cog = cog_object
         self.ctx = ctx
-        self.author = ctx.author
+        self.author = ctx.user
         emojis_ids = cog_object.emojis_ids
         
         is_disabled = player_data[1]
@@ -324,7 +323,7 @@ class ShootView(View):
         """called by the Select. It is the end of the tranfer flow."""
         cog = self.cog
         ctx = self.ctx
-        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "transfer"
+        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "transfer"
         print(self.selected_player)
         data = {"ap_number": int(ap_number), "deffender_id": self.selected_player}
         selected_member = ctx.guild.get_member(self.selected_player)
@@ -332,7 +331,7 @@ class ShootView(View):
         async with cog.session.get(url, json=data) as resp:
             reply = await resp.json()
             if resp.status == 200:
-                await cog.log(self.game, "Player {} transfered {} AP to <@{}>".format(ctx.author.name, ap_number, self.selected_player))
+                await cog.log(self.game, "Player {} transfered {} AP to <@{}>".format(ctx.user.name, ap_number, self.selected_player))
                 await interaction.response.send_message("Transfer done.\n")
     
     def disable_all_selects(self):
@@ -343,12 +342,12 @@ class ShootView(View):
 
 class UpgradeRangeView(View):
     """This View handles the upgrade of the range"""
-    def __init__(self, cog_object, ctx:ApplicationContext , player_data, game):
+    def __init__(self, cog_object, ctx , player_data, game):
         super().__init__(timeout=500)
         self.cog = cog_object
         self.ctx = ctx
         self.game = game
-        self.author = ctx.author
+        self.author = ctx.user
         emojis_ids = cog_object.emojis_ids
         player_data = player_data[0]
         print(player_data["tank"]["range"])
@@ -386,7 +385,7 @@ class UpgradeRangeView(View):
             return
         elif not confirm_view.value:
             return
-        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "upgrade"
+        url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "upgrade"
         data = {"upgrade_size": 1}
         async with cog.session.get(url, json=data) as resp:
             reply = await resp.json()
@@ -405,7 +404,7 @@ class GameOverviewView(View):
         super().__init__(timeout=500)
         self.cog = cog_object
         self.ctx = ctx
-        self.author = ctx.author
+        self.author = ctx.user
         emojis_ids = cog_object.emojis_ids
         is_disabled = player_data[1]
         player_data = player_data[0]

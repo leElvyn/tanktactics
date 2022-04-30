@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import Intents, app_commands
 
 import pyppeteer
 import asyncio
@@ -21,14 +22,13 @@ EMOJI_GUILD = 869906440268173333
 async def startup():
     print("Starting up...")
 
-    bot = commands.Bot(command_prefix='&')
+    bot = commands.Bot(command_prefix='&', intents=Intents.none())
 
     cog = TankTactics(bot)
 
     await cog.initialize(token, EMOJI_GUILD)
-    bot.add_cog(cog)
-    bot.add_cog(CommandErrorHandler(bot))
-
+    await bot.add_cog(cog)
+    await bot.add_cog(CommandErrorHandler(bot))
 
     await bot.start(bot_token)
 

@@ -1,9 +1,9 @@
-from operator import is_
 import discord
-from discord import interactions
+from discord import Interaction, app_commands
 from discord.ext import commands
 
 import tt_views
+
 import aiohttp
 import pyppeteer
 import asyncio
@@ -17,20 +17,21 @@ _ = gettext.gettext
 class TankTactics(commands.Cog):
     def __init__(self, bot):
 
-        self.bot = bot
-        self._last_member = None
-        self.browser = None # we can't init browser here because it's async TO FIX
+        self.bot: commands.Bot = bot
+        self.browser = None
+        super().__init__()
 
     def get_api_url(self, object):
         return f'http://127.0.0.1:8000/api/{object}'
 
     async def initialize(self, token, emoji_guild):
+
         self.emoji_guild_id = emoji_guild
         self.browser = await pyppeteer.launch(args=['--no-sandbox'], autoClose = False)
         await self.browser.newPage()
         headers = {
-        "Authorization": f"Token {token}",
-        "Content-Type": "application/json",
+            "Authorization": f"Token {token}",
+            "Content-Type": "application/json",
         }
 
         clientSession = aiohttp.ClientSession(headers=headers)
@@ -39,6 +40,7 @@ class TankTactics(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+
         emojis_ids = {}
         emoji_guild = self.bot.get_guild(self.emoji_guild_id)
         for emoji in emoji_guild.emojis:
@@ -69,18 +71,18 @@ class TankTactics(commands.Cog):
         image_url = "https://tank-tactics.com/staticmaps/" + image_name
         return image_url
 
-    async def fetch_player(self, ctx, player_id, guild_id, run_checks=True):
+    async def fetch_player(self, interaction, player_id, guild_id, run_checks=True):
         async with self.session.get(self.get_api_url(f'guild/{guild_id}/players/{player_id}')) as response:
             if response.status == 404:
-                await ctx.respond("You are not in the game")
+                await interaction.respond("You are not in the game")
                 return 404
             player = await response.json()
             if player["is_dead"] == True and run_checks:
-                await ctx.respond("You are dead")
+                await interaction.respond("You are dead")
                 return False
 
             if player["tank"]["action_points"] <= 0:
-                ## await ctx.respond("You are out of action points.")
+                ## await interaction.respond("You are out of action points.")
                 # here, is_disabled is true
                 return (player, True)
         return (player, False)
@@ -92,7 +94,7 @@ class TankTactics(commands.Cog):
         
         return player
 
-    async def fetch_game(self, ctx, guild_id):
+    async def fetch_game(self, interaction, guild_id):
         async with self.session.get(self.get_api_url(f'guild/{guild_id}')) as response:
 
             game = await response.json()
@@ -106,151 +108,161 @@ class TankTactics(commands.Cog):
                 return False
 
     async def log(self, game, message):
-        channel = self.bot.get_channel(game["logs_channel"])
+        channel = await self.bot.fetch_channel(game["logs_channel"])
         await channel.send(message)
 
-    @commands.slash_command()
-    async def move(self, ctx):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
+    @app_commands.command(name="move")
+    async def move(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id)
         if data == 404:
             return
 
-        url = await self.generate(ctx.author.id)
+        url = await self.generate(interaction.user.id)
 
-        game = await self.fetch_game(ctx, ctx.guild.id)
+        game = await self.fetch_game(interaction, interaction.guild.id)
         if not game:
             return
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
-        view = tt_views.MoveView(self, ctx, data, game)
+        view = tt_views.MoveView(self, interaction, data, game)
 
-        message = await ctx.respond(embed=embed, view=view)
+        message = await interaction.followup.send(embed=embed, view=view)
         await view.wait()
-        await message.message.edit(view=view)
+        await interaction.edit_original_message(view=view)
 
 
-    @commands.slash_command()
-    async def shoot(self, ctx):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
+    @app_commands.command(name="shoot")
+    async def shoot(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id)
         if data == False:
             return
         
-        url = await self.generate(ctx.author.id)
+        url = await self.generate(interaction.user.id)
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
-        game = await self.fetch_game(ctx, ctx.guild.id)
+        game = await self.fetch_game(interaction, interaction.guild.id)
 
-        view = tt_views.ShootView(self, ctx, data, game, is_friendly=False)
+        view = tt_views.ShootView(self, interaction, data, game, is_friendly=False)
 
-        message = await ctx.respond(embed=embed, view=view)
+        await interaction.followup.send(embed=embed, view=view)
 
         await view.wait()
-        await message.message.edit(view=view)
+        await interaction.edit_original_message(view=view)
 
 
-    @commands.slash_command()
-    async def transfer(self, ctx: discord.ApplicationContext):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
+    @app_commands.command(name="transfer")
+    async def transfer(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id)
         if data == 404:
             return
 
-        url = await self.generate(ctx.author.id)
+        url = await self.generate(interaction.user.id)
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
-        game = await self.fetch_game(ctx, ctx.guild.id)
+        game = await self.fetch_game(interaction, interaction.guild.id)
 
-        view = tt_views.ShootView(self, ctx, data, game, is_friendly=True)
+        view = tt_views.ShootView(self, interaction, data, game, is_friendly=True)
 
-        message = await ctx.respond(embed=embed, view=view)
+        message = await interaction.followup.send(embed=embed, view=view)
         await view.wait()
-        await ctx.interaction.response.edit_message(view=view)
+        await interaction.edit_original_message(view=view)
 
-    @commands.slash_command()
-    async def upgrade(self, ctx):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id)
+    @app_commands.command(name="upgrade")
+    async def upgrade(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id)
         if not data:
             return
         
-        url = await self.generate(ctx.author.id)
+        url = await self.generate(interaction.user.id)
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
 
-        game = await self.fetch_game(ctx, ctx.guild.id)
+        game = await self.fetch_game(interaction, interaction.guild.id)
 
-        view = tt_views.UpgradeRangeView(self, ctx, data, game)
+        view = tt_views.UpgradeRangeView(self, interaction, data, game)
 
-        await ctx.respond(embed=embed, view=view)
+        await interaction.followup.send(embed=embed, view=view)
         await view.wait()
-        await ctx.interaction.response.edit_message(view=view)
+        await interaction.edit_original_message(view=view)
 
 
-    @commands.slash_command()
-    async def game(self, ctx):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id, False)
+    @app_commands.command(name="game")
+    async def game(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id, False)
         if not data:
             url = await self.generate(False)
         else:
-            url = await self.generate(ctx.author.id)
+            url = await self.generate(interaction.user.id)
 
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
         if not data:
-            view = tt_views.GameOverviewView(self, ctx, data)
-            await ctx.respond(embed=embed, view=view)
+            view = tt_views.GameOverviewView(self, interaction, data)
+            await interaction.followup.send(embed=embed, view=view)
         else:
-            await ctx.respond(embed=embed)
+            await interaction.followup.send(embed=embed)
 
 
 
 
-    @commands.slash_command(guild_ids=[613018525111549953])
-    async def register(self, ctx: discord.ApplicationContext):
-        if not await self.create_player(ctx.guild.id, ctx.author):
-            await ctx.respond("You are already registered")
+    @app_commands.command(name="register")
+    async def register(self, interaction: Interaction):
+        if not await self.create_player(interaction.guild.id, interaction.user):
+            await interaction.response.send_message("An error occured during registration.")
         else:
-            await ctx.respond("Vous êtes inscrit !")
+            await interaction.response.send_message("You're registered !")
 
 
-    @commands.slash_command()
-    async def vote(self, ctx, player: discord.Member):
-        data = await self.fetch_player(ctx, ctx.author.id, ctx.guild.id, run_checks=False)
-        target = await self.fetch_player(ctx, player.id, ctx.guild.id, run_checks=False)
-        game = await self.fetch_game(ctx, ctx.guild.id)
+    @app_commands.command(name="vote")
+    async def vote(self, interaction: Interaction, player: discord.Member):
+        data = await self.fetch_player(interaction, interaction.user.id, interaction.guild.id, run_checks=False)
+        target = await self.fetch_player(interaction, player.id, interaction.guild.id, run_checks=False)
+        game = await self.fetch_game(interaction, interaction.guild.id)
 
         if data == 404:
-            await ctx.respond("You are not in the game.", ephemeral=True)
+            await interaction.respond("You are not in the game.", ephemeral=True)
             return
         
         if target == 404:
-            await ctx.respond("The player you're trying to vote for isn't in the game.", ephemeral=True)
+            await interaction.respond("The player you're trying to vote for isn't in the game.", ephemeral=True)
             return
         target = target[0]
         data = data[0]
 
         if target["is_dead"] == True:
-            await ctx.respond("The player you're trying to vote for is dead.", ephemeral=True)
+            await interaction.respond("The player you're trying to vote for is dead.", ephemeral=True)
             return
 
         if data["is_dead"] == False:
-            await ctx.respond("Only dead players can vote.", ephemeral=True)
+            await interaction.respond("Only dead players can vote.", ephemeral=True)
             return
 
         if data["ad_vote"] != None:
-            await ctx.respond("You already voted today.", ephemeral=True)
+            await interaction.respond("You already voted today.", ephemeral=True)
             return
 
-        url = self.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "vote"
+        url = self.get_api_url("guild") + "/" + str(interaction.guild.id) + "/" + "players" + "/" + str(interaction.user.id) + "/" + "vote"
         json_data = {"target_id": player.id}
         async with self.session.get(url, json=json_data) as resp:
             reply = await resp.json()
             if resp.status == 200:
                 print(data, target)
-                await ctx.respond("Vote done.\n")
+                await interaction.response.send_message("Vote done.\n")
                 await self.log(game, f"{data['name']} voted for {target['name']}.\n{target['name']} now has {reply['vote_number']} vote(s) today.")
         
