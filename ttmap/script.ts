@@ -22,6 +22,9 @@ async function main(map: HTMLElement) {
     if (is_public) {
         await createSocket(game, map)
     }
+    else {
+        document.getElementById("background").style.background = "#333333"
+    }
     // @ts-ignore
     if (is_focused) {
         focusMap(map, game.grid_size_x, game.grid_size_y)

@@ -3,7 +3,7 @@ import { Game, MoveEvent } from "./interfaces"
 
 export async function createSocket(game: Game, map: HTMLElement) {
     const socket = new WebSocket('ws://'
-        + "tank-tactics.com"
+        + window.location.host
         + '/ws/game/'
         + game.guild_id
         + '/'

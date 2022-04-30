@@ -86,7 +86,7 @@ class ArrowButton(Button):
             if resp.status != 200:
                 raise Exception("Error while moving tank")
         await interaction.response.send_message(f"You moved your tank to {current_coordinates['x']}/{current_coordinates['y']}")
-        await cog.log(self.view.game, f"<@{ctx.author}> moved his tank to {current_coordinates['x']}/{current_coordinates['y']}") 
+        await cog.log(self.view.game, f"<@{ctx.author.id}> moved his tank to {current_coordinates['x']}/{current_coordinates['y']}") 
         self.view.disable_all_arrows()
         self.view.stop()
 
@@ -199,21 +199,21 @@ class NearPlayerSelect(Select):
             return 
 
         cog = self.view.cog
-        ctx = self.view.ctx
+        ctx: ApplicationContext = self.view.ctx
         url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.author.id) + "/" + "attack"
         data = {"deffender_id": self.values[0]}
-        target_member = ctx.guild.get_member(self.values[0])
+        target_member = await ctx.guild.fetch_member(self.values[0])
         print(target_member)
         async with cog.session.get(url, json=data) as resp:
             reply = await resp.json()
             if resp.status == 200:
                 self.view.disable_all_selects()
                 await interaction.response.send_message("Bang.\n")
-                log_message = f"<@{ctx.author}> attacked <@{target_member}>."
+                log_message = f"<@{ctx.author.id}> attacked <@{target_member.id}>.\n"
                 if reply["deffensive_player_dead"]:
-                    log_message += self.values[0] + " is now dead. "
+                    log_message += f"<@{self.values[0]}> is now dead. "
                 else:
-                    log_message += self.values[0] + " now has " + str(reply["deffender_health"]) + " reaming health points."
+                    log_message += f"<@{self.values[0]}> now has " + str(reply["deffender_health"]) + " reaming health points."
                 await cog.log(self.view.game, log_message)
                 self.view.stop()
 

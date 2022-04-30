@@ -15,14 +15,16 @@ export function registerGestures(mapDiv) {
         mobileDragElement(map);
         map.style.transform = "scale(1.01)";
         document.body.onwheel = wheelEvent;
-        // @ts-ignore
-        let mc = new Hammer(document.body);
-        // @ts-ignore
-        let pinch = new Hammer.Pinch();
-        mc.add(pinch);
-        mc.on("pinch", function (ev) {
-            //MOTHER FUCKING FUCK THIS SHIT
-        });
+        /*    // @ts-ignore
+            let mc = new Hammer(document.body);
+            // @ts-ignore
+            let pinch = new Hammer.Pinch();
+        
+            mc.add(pinch)
+        
+            mc.on("pinch", function(ev) {
+                //MOTHER FUCKING FUCK THIS SHIT
+            })*/
     });
 }
 var pz;
@@ -120,4 +122,3 @@ function zoom(deltaY, clientX, clientY) {
     map.style.left = (parseInt(map.style.left) + newPositionOffsetX - posFromCenterX) + "px";
     map.style.top = (parseInt(map.style.top) + newPositionOffsetY - posFromCenterY) + "px";
 }
-//# sourceMappingURL=mapMouvement.js.map

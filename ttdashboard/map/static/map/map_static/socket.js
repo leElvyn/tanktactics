@@ -11,7 +11,7 @@ import { movePlayer } from "./actions.js";
 export function createSocket(game, map) {
     return __awaiter(this, void 0, void 0, function* () {
         const socket = new WebSocket('ws://'
-            + "tank-tactics.com"
+            + window.location.host
             + '/ws/game/'
             + game.guild_id
             + '/');
@@ -33,4 +33,3 @@ export function createSocket(game, map) {
         };
     });
 }
-//# sourceMappingURL=socket.js.map

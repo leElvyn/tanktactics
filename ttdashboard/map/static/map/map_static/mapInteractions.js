@@ -32,4 +32,3 @@ function canvasMouseOut(event) {
     //range.style.border = "3px solid rgb(5,5,5)";
     range.style.zIndex = "1";
 }
-//# sourceMappingURL=mapInteractions.js.map

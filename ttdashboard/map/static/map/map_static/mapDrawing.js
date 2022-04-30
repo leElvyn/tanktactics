@@ -140,4 +140,3 @@ function drawRangeRepresentation(range, color) {
     rangeDiv.style.backgroundColor = new_col;
     return rangeDiv;
 }
-//# sourceMappingURL=mapDrawing.js.map

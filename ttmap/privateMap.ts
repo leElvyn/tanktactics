@@ -1,6 +1,7 @@
 import { TILE_SIZE } from "./script.js"
 
 export function focusMap(map: HTMLElement, grid_size_x: number, grid_size_y: number) {
+    document.getElementById("background").style.background = "#333333"
     // @ts-ignored
     let focusObj = JSON.parse(focus);
     let focusCanvas = document.getElementById("player_" + focusObj.x + "_" + focusObj.y)

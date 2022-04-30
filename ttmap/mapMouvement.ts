@@ -5,7 +5,7 @@ export async function registerGestures(mapDiv: HTMLElement) {
     mobileDragElement(map);
     map.style.transform = "scale(1.01)";
     document.body.onwheel = wheelEvent;
-    // @ts-ignore
+/*    // @ts-ignore
     let mc = new Hammer(document.body);
     // @ts-ignore
     let pinch = new Hammer.Pinch();
@@ -14,7 +14,7 @@ export async function registerGestures(mapDiv: HTMLElement) {
 
     mc.on("pinch", function(ev) { 
         //MOTHER FUCKING FUCK THIS SHIT
-    })
+    })*/
 
 }
 

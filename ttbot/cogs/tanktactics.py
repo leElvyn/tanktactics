@@ -46,8 +46,6 @@ class TankTactics(commands.Cog):
         
         self.emojis_ids = emojis_ids
 
-        self.beta_events_channel = self.bot.get_channel(735590589879095648) ###################### FOR BETA, SHOULD BE REMOVED 
-
         print('TankTactics is ready.')
 
     async def generate(self, focus_id):
@@ -63,7 +61,7 @@ class TankTactics(commands.Cog):
         image_name += '.png'
         image_path = os.getcwd() + '/static/staticmaps/' + image_name
         print(image_path)
-        await page.screenshot({'path': image_path, "width":896, "height":896})
+        await page.screenshot({'path': image_path, "width":1024, "height":1024})
         await page.close()
         image_bin = open(image_path, 'rb')
 
@@ -108,6 +106,7 @@ class TankTactics(commands.Cog):
                 return False
 
     async def log(self, game, message):
+        print(game)
         channel = self.bot.get_channel(game["logs_channel"])
         await channel.send(message)
 

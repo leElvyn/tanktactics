@@ -25,6 +25,9 @@ function main(map) {
         if (is_public) {
             yield createSocket(game, map);
         }
+        else {
+            document.getElementById("background").style.background = "#333333";
+        }
         // @ts-ignore
         if (is_focused) {
             focusMap(map, game.grid_size_x, game.grid_size_y);
@@ -32,4 +35,3 @@ function main(map) {
     });
 }
 main(map);
-//# sourceMappingURL=script.js.map

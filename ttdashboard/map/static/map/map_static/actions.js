@@ -25,4 +25,3 @@ export function movePlayer(event) {
 }
 export function shootPlayer() {
 }
-//# sourceMappingURL=actions.js.map
