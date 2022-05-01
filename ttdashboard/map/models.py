@@ -98,10 +98,9 @@ class Player(models.Model):
         self.tank.y = y
         self.tank.save()
         self.save()
-        try:
-            broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y},"newActionPoints": self.tank.action_points})
-        except:
-            pass
+        
+        broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y},"newActionPoints": self.tank.action_points})
+
     def shoot(self, deffensive_player):
         reply = {"deffensive_player_dead" : False}
 
@@ -132,6 +131,8 @@ class Player(models.Model):
         deffensive_player.tank.save()
         deffensive_player.save()
         self.save()
+        broadcast_event(self.game_set.all().first(), "shoot", {"offensive_player": {"x": self.tank.x, "y": self.tank.y}, "deffensive_player": {"x": deffensive_player.tank.x, "y": deffensive_player.tank.y}})
+
         return reply
 
     def shoot_ap(self, deffensive_player, number_of_ap_to_shoot):
@@ -241,8 +242,6 @@ class Game(models.Model):
 
     def new_action_day(self):
         self.next_ad_end += datetime.timedelta(minutes = self.ad_duration)
-        print(self.ad_duration)
-        print(self.next_ad_end)
         for player in self.players.all():
             if player.is_dead:
                 player.ad_vote = None
@@ -272,12 +271,13 @@ class Game(models.Model):
     def finish_game(self):
         self.is_ended = True
 
-def broadcast_event(game, event_type, data):
+def broadcast_event(game: Game, event_type, data):
     layer = get_channel_layer()
     # Send message to room group
     game_serialized = map.serializers.GameSerializer(game)
+    print(game.guild_id)
     async_to_sync(layer.group_send)(
-        f'game_{game.id}',
+        f'game_{game.guild_id}',
         {
             'type': event_type,
             'data': data,

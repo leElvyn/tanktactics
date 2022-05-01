@@ -1,32 +1,43 @@
 import { MoveEvent } from "./interfaces";
 import { TILE_SIZE } from "./script.js";
 
-export function movePlayer(event: MoveEvent) {
-    let playerCanvas = document.getElementById("player_" + event.old_x + "_" + event.old_y);
-    let rangeDiv = document.getElementById("range_" + event.old_x + "_" + event.old_y);
-    
-    let move_x = event.new_x - event.old_x
-    let move_y = event.new_y - event.old_y
-    
-    let framesReaming = TILE_SIZE
-    animatePlayerMove()
+import anime from "./anime.js"
 
-    function animatePlayerMove() {
-    
-        console.log(event)
-        if (move_x == 1 || move_x == -1) {
-            playerCanvas.style.left = parseInt(playerCanvas.style.left) + 1 * move_x + "px"
-            rangeDiv.style.left = parseInt(rangeDiv.style.left) + 1 * move_x + "px"
-        }
-        if (move_y == 1 || move_y == -1) {
-            playerCanvas.style.top = parseInt(playerCanvas.style.top) + 1 * move_y + "px"
-            rangeDiv.style.top = parseInt(rangeDiv.style.top) + 1 * move_y + "px"
-        }
-        if (framesReaming <= 0) {
-            return
-        }
-        framesReaming --;
-        window.requestAnimationFrame(animatePlayerMove)
+export function movePlayer(event: MoveEvent) {
+    let position_string = event.position.x + "_" + event.position.y
+    let playerCanvas = document.getElementById("player_" + position_string);
+    let rangeDiv = document.getElementById("range_" + position_string);
+
+    let move_x = event.direction.x
+    let move_y = event.direction.y
+
+    if (move_x == 1 || move_x == -1) {
+        anime({
+            targets: "#player_" + position_string,
+            left: parseInt(playerCanvas.style.left) + TILE_SIZE * move_x,
+            duration: 3000,
+            easing: "easeInOutSine"
+        })
+        anime({
+            targets: "#range_" + position_string,
+            left: parseInt(rangeDiv.style.left) + TILE_SIZE * move_x,
+            duration: 3000,
+            easing: "easeInOutSine"
+        })
+    }
+    if (move_y == 1 || move_y == -1) {
+        anime({
+            targets: "#player_" + position_string,
+            top: parseInt(playerCanvas.style.top) + TILE_SIZE * move_y,
+            duration: 3000,
+            easing: "easeInOutSine"
+        })
+        anime({
+            targets: "#range_" + position_string,
+            top: parseInt(rangeDiv.style.top) + TILE_SIZE * move_y,
+            duration: 3000,
+            easing: "easeInOutSine"
+        })
     }
 }
 

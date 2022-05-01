@@ -1,39 +1,31 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { TILE_SIZE } from "./script.js";
 var heartRed = new Image();
 heartRed.src = "/static/map/map_static/assets/heart-red.png";
 var heartBlack = new Image();
 heartBlack.src = "/static/map/map_static/assets/heart-black.png";
-export function drawMap(map, game) {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield fetchGame();
-        console.log("waitwhat");
-        /*await waitForStaticLoad(heartRed)
-        await waitForStaticLoad(heartBlack)*/
-        drawGrid(map, game);
-        drawPlayers(map, game);
-        drawRangeRepresentations(map, game);
-        centerMap(map);
-    });
+export async function drawMap(map, game) {
+    await fetchGame();
+    /*await waitForStaticLoad(heartRed)
+    await waitForStaticLoad(heartBlack)*/
+    drawGrid(map, game);
+    drawPlayers(map, game);
+    drawRangeRepresentations(map, game);
+    centerMap(map);
 }
 function waitForStaticLoad(element) {
     return new Promise(resolve => element.onload = resolve);
 }
-export function fetchGame() {
-    return __awaiter(this, void 0, void 0, function* () {
-        // @ts-ignore
-        return fetch(url)
-            .then((response) => response.json())
-            .then((responseJson) => { return responseJson; });
-    });
+function parseReviver(key, value) {
+    if (typeof value === 'string' && key == "guild_id") {
+        return BigInt(value);
+    }
+    return value;
+}
+export async function fetchGame() {
+    // @ts-ignore
+    const response = await fetch(url);
+    // come on JS, go home. You're drunk
+    return JSON.parse(await response.text(), parseReviver);
 }
 function drawGrid(map, game) {
     for (var i = 0; i <= game.grid_size_y; i++) {
@@ -61,7 +53,12 @@ function drawPlayers(map, game) {
             continue;
         }
         let tile = document.getElementById("tile_" + player.tank.x.toString() + "_" + player.tank.y.toString());
-        let canvas = drawPlayer(player);
+        let canvas = document.createElement("canvas");
+        canvas.setAttribute("height", "512");
+        canvas.setAttribute("width", "512");
+        canvas.className = "player-canvas";
+        let ctx = canvas.getContext("2d");
+        drawPlayer(player, ctx);
         canvas.id = "player_" + player.tank.x.toString() + "_" + player.tank.y.toString();
         canvas.setAttribute("coordinate", player.tank.x.toString() + "_" + player.tank.y.toString());
         canvas.style.top = tile.style.top;
@@ -69,12 +66,7 @@ function drawPlayers(map, game) {
         map.appendChild(canvas);
     }
 }
-function drawPlayer(player) {
-    let canvas = document.createElement("canvas");
-    canvas.setAttribute("height", "512");
-    canvas.setAttribute("width", "512");
-    canvas.className = "player-canvas";
-    let ctx = canvas.getContext("2d");
+function drawPlayer(player, ctx) {
     ctx.fillStyle = "rgb(52, 201, 182)";
     ctx.fillRect(156, 156, 200, 200);
     //drawRangeRepresentation(ctx, player.tank.range, player.player_color);
@@ -86,7 +78,6 @@ function drawPlayer(player) {
     drawHeart(ctx, player.tank.health_points);
     drawActionPoints(ctx, player.tank.action_points);
     drawRange(ctx, player.tank.range);
-    return canvas;
 }
 function drawActionPoints(ctx, number) {
     ctx.font = "bold 80px Arial";
@@ -145,4 +136,8 @@ function drawRangeRepresentation(range, color) {
     new_col = new_col.replace(/\)/i, ',0.3)');
     rangeDiv.style.backgroundColor = new_col;
     return rangeDiv;
+}
+export function redrawPlayer(canvas, player) {
+    canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
+    drawPlayer(player, canvas);
 }

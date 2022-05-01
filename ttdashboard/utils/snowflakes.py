@@ -33,7 +33,6 @@ def snowflake(object, original_id) -> int:
         counter = 0
     counter += 1
     original_id = complete_bin(counter, 10)
-    print(str(type(object)))
     object_type = types[str(type(object))]
     timestamp = complete_bin((datetime.datetime.utcnow() - epoch).seconds, 25)
     pid = complete_bin(os.getpid(), 5)

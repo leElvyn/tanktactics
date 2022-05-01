@@ -13,7 +13,7 @@ export async function createSocket(game: Game, map: HTMLElement) {
         const message = JSON.parse(e.data);
         const event = message.event;
         const data = message.data;
-
+        
         game = message.new_game_data;
         
         switch (event) {

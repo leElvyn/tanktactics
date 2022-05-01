@@ -1,31 +1,20 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-export function registerGestures(mapDiv) {
-    return __awaiter(this, void 0, void 0, function* () {
-        map = mapDiv;
-        mapcontainer = map.parentElement;
-        dragElement(map);
-        mobileDragElement(map);
-        map.style.transform = "scale(1.01)";
-        document.body.onwheel = wheelEvent;
-        /*    // @ts-ignore
-            let mc = new Hammer(document.body);
-            // @ts-ignore
-            let pinch = new Hammer.Pinch();
-        
-            mc.add(pinch)
-        
-            mc.on("pinch", function(ev) {
-                //MOTHER FUCKING FUCK THIS SHIT
-            })*/
-    });
+export async function registerGestures(mapDiv) {
+    map = mapDiv;
+    mapcontainer = map.parentElement;
+    dragElement(map);
+    mobileDragElement(map);
+    map.style.transform = "scale(1.01)";
+    document.body.onwheel = wheelEvent;
+    /*    // @ts-ignore
+        let mc = new Hammer(document.body);
+        // @ts-ignore
+        let pinch = new Hammer.Pinch();
+    
+        mc.add(pinch)
+    
+        mc.on("pinch", function(ev) {
+            //MOTHER FUCKING FUCK THIS SHIT
+        })*/
 }
 var pz;
 var scale = 1.01;

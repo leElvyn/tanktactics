@@ -11,7 +11,6 @@ class ClientConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['game_sf']
         self.room_group_name = f'game_{self.room_name}'
-        print(self.room_group_name)
         # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -29,11 +28,12 @@ class ClientConsumer(AsyncWebsocketConsumer):
 
     async def shoot(self, event):
         await self.send(text_data=json.dumps({
-            'event': 'tank_shoot',
+            'event': 'shoot',
             'data': event['data']
         }))
 
     async def move(self, event):
+        print(event)
         await self.send(text_data=json.dumps({
             'event': 'move',
             'data': event['data'],

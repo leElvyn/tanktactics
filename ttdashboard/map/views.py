@@ -140,7 +140,6 @@ def create_game(request, guild_id):
     if not validate_new_game(settings):
         return JsonResponse({"error": "Invalid settings"}, status=400)
 
-    print(datetime.datetime.utcnow())
     if settings["game_start_date"] < datetime.datetime.utcnow():
         return JsonResponse({"error": "The game start date is before now"}, status=400)
 
@@ -163,7 +162,9 @@ def get_game(request, guild_id):
     if not game:
         raise Http404("Game does not exist")
     game_json = GameSerializer(game)
-    return JsonResponse(game_json.data, status=200)
+    json_data = game_json.data
+    json_data["guild_id"] = str(json_data["guild_id"])
+    return JsonResponse(json_data, status=200)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -292,7 +293,6 @@ def private_map(request, guild_id):
     if player_id:
         player = Player.objects.get(discord_id=player_id)
         context["focus"] = f'{{"x": {player.tank.x}, "y": {player.tank.y}, "range": {player.tank.range}}}'
-        print(context["focus"])
         context["is_focused"] = "true"
     return render(request, 'map/map_private.html.dj', context)
 
