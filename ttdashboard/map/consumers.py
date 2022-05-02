@@ -32,8 +32,7 @@ class ClientConsumer(AsyncWebsocketConsumer):
             'data': event['data']
         }))
 
-    async def move(self, event):
-        print(event)
+    async def move(self, event):        
         await self.send(text_data=json.dumps({
             'event': 'move',
             'data': event['data'],

@@ -1,11 +1,12 @@
 import { TILE_SIZE } from "./script.js";
 import anime from "./anime.js";
+import { redrawPlayer } from "./mapDrawing.js";
 export function movePlayer(event) {
     let position_string = event.position.x + "_" + event.position.y;
     let playerCanvas = document.getElementById("player_" + position_string);
     let rangeDiv = document.getElementById("range_" + position_string);
-    let move_x = event.direction.x;
-    let move_y = event.direction.y;
+    let move_x = parseInt(event.direction.x);
+    let move_y = parseInt(event.direction.y);
     if (move_x == 1 || move_x == -1) {
         anime({
             targets: "#player_" + position_string,
@@ -34,6 +35,10 @@ export function movePlayer(event) {
             easing: "easeInOutSine"
         });
     }
+    redrawPlayer(playerCanvas.getContext("2d"), event.player);
+    let new_position = (parseInt(event.position.x) + event.direction.x) + "_" + (parseInt(event.position.y) + event.direction.y);
+    playerCanvas.id = "player_" + new_position;
+    rangeDiv.id = "range_" + new_position;
 }
 export function shootPlayer() {
 }

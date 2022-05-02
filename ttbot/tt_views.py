@@ -202,7 +202,6 @@ class NearPlayerSelect(Select):
         url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "attack"
         data = {"deffender_id": self.values[0]}
         target_member = await ctx.guild.fetch_member(self.values[0])
-        print(target_member)
         async with cog.session.get(url, json=data) as resp:
             reply = await resp.json()
             if resp.status == 200:

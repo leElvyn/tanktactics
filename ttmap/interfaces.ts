@@ -39,13 +39,13 @@ export interface Game {
 
 export interface MoveEvent {
     direction: {
-        x: number,
-        y: number
+        x: string,
+        y: string
     },
 
     position: {
-        x: number,
-        y: number
+        x: string,
+        y: string
     },
-    newActionPoints: number
+    player: Player
 }

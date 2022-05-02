@@ -99,7 +99,7 @@ class Player(models.Model):
         self.tank.save()
         self.save()
         
-        broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y},"newActionPoints": self.tank.action_points})
+        broadcast_event(game_object,"move", {"position": {"x": position_x, "y": position_y}, "direction": {"x": x - position_x, "y": y - position_y}, "player": map.serializers.PlayerSerializer(self).data})
 
     def shoot(self, deffensive_player):
         reply = {"deffensive_player_dead" : False}

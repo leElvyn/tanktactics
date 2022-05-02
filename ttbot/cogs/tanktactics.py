@@ -212,7 +212,7 @@ class TankTactics(commands.Cog):
 
         embed = discord.Embed(title=_("Current game state :"))
         embed.set_image(url=url)
-        if not data:
+        if data:
             view = tt_views.GameOverviewView(self, interaction, data)
             await interaction.followup.send(embed=embed, view=view)
         else:
