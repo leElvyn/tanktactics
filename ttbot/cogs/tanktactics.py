@@ -54,9 +54,9 @@ class TankTactics(commands.Cog):
         page = await self.browser.newPage()
         await page.setViewport({"width":1024, "height":1024})
         if focus_id != False:
-            await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333?focus_player_id={focus_id}')
+            await page.goto(f'http://127.0.0.1:8000/map/guild/613018525111549953?focus_player_id={focus_id}')
         else:
-            await page.goto(f'http://127.0.0.1:8000/map/guild/869906440268173333')
+            await page.goto(f'http://127.0.0.1:8000/map/guild/613018525111549953')
 
         await asyncio.sleep(0.3) #it sometimes blur, making sure it REALLy is loaded
 
