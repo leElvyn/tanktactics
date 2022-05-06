@@ -63,7 +63,7 @@ class TankTactics(commands.Cog):
         image_name = str(datetime.datetime.utcnow().timestamp())
         image_name = image_name.replace('.', '-') # to avoid problems with dots in file names
         image_name += '.png'
-        image_path = os.getcwd() + '/tanktactics/static/static/staticmaps/' + image_name
+        image_path = os.getcwd() + '/tanktactics/static/staticmaps/' + image_name
         await page.screenshot({'path': image_path, "width":1024, "height":1024})
         await page.close()
         image_bin = open(image_path, 'rb')
