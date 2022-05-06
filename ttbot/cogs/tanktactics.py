@@ -74,11 +74,11 @@ class TankTactics(commands.Cog):
     async def fetch_player(self, interaction, player_id, guild_id, run_checks=True):
         async with self.session.get(self.get_api_url(f'guild/{guild_id}/players/{player_id}')) as response:
             if response.status == 404:
-                await interaction.respond("You are not in the game")
+                await interaction.followup.send("You are not in the game")
                 return 404
             player = await response.json()
             if player["is_dead"] == True and run_checks:
-                await interaction.respond("You are dead")
+                await interaction.followup.send("You are dead")
                 return False
 
             if player["tank"]["action_points"] <= 0:
@@ -236,25 +236,25 @@ class TankTactics(commands.Cog):
         game = await self.fetch_game(interaction, interaction.guild.id)
 
         if data == 404:
-            await interaction.respond("You are not in the game.", ephemeral=True)
+            await interaction.followup.send("You are not in the game.", ephemeral=True)
             return
         
         if target == 404:
-            await interaction.respond("The player you're trying to vote for isn't in the game.", ephemeral=True)
+            await interaction.followup.send("The player you're trying to vote for isn't in the game.", ephemeral=True)
             return
         target = target[0]
         data = data[0]
 
         if target["is_dead"] == True:
-            await interaction.respond("The player you're trying to vote for is dead.", ephemeral=True)
+            await interaction.followup.send("The player you're trying to vote for is dead.", ephemeral=True)
             return
 
         if data["is_dead"] == False:
-            await interaction.respond("Only dead players can vote.", ephemeral=True)
+            await interaction.followup.send("Only dead players can vote.", ephemeral=True)
             return
 
         if data["ad_vote"] != None:
-            await interaction.respond("You already voted today.", ephemeral=True)
+            await interaction.followup.send("You already voted today.", ephemeral=True)
             return
 
         url = self.get_api_url("guild") + "/" + str(interaction.guild.id) + "/" + "players" + "/" + str(interaction.user.id) + "/" + "vote"
