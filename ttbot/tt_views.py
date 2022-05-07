@@ -32,6 +32,8 @@ class Confirm(View):
     # We also send the user an ephemeral message that we're confirming their choice.
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        print(interaction)
+        print(type(interaction))
         self.value = True
         await interaction.response.pong()
         self.stop()
