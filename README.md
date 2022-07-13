@@ -23,4 +23,4 @@ The launch instructions are left as an exercise to the reader
 
 # Special Thanks 
 
-Thanks a lot to Luke Muscat (@pgmuscat) for the original rules of the games.
+Thanks a lot to Luke Muscat (@pgmuscat) for the original rules of the game.
