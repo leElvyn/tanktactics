@@ -20,3 +20,7 @@ A TS app to view the current state of the game. It gets compiled to JS in the [/
 # Usage
 
 The launch instructions are left as an exercise to the reader
+
+# Special Thanks 
+
+Thanks a lot to Luke Muscat (@pgmuscat) for the original rules of the games.
