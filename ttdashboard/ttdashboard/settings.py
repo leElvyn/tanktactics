@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'channels',
     "background_task",
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    "social_django"
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
+
+# Django Social Auth
+
+AUTHENTICATION_BACKENDS = [
+    "auth.backends.ProloginOpenId",
+    'django.contrib.auth.backends.ModelBackend',
+]

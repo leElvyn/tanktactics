@@ -2,10 +2,10 @@ import { Game, Player } from "./interfaces";
 import { TILE_SIZE } from "./mapMain.js";
 
 var heartRed = new Image();
-heartRed.src = "/src/assets/heart-red.png"
+heartRed.src = "/heart-red.png"
 
 var heartBlack = new Image();
-heartBlack.src = "/src/assets/heart-black.png"
+heartBlack.src = "/heart-black.png"
 
 
 export async function drawMap(map: HTMLElement, game) {
@@ -124,7 +124,7 @@ function drawHeart(ctx: CanvasRenderingContext2D, numberAlive: number) {
     }
 }
 function centerMap(map: HTMLElement) {
-    let bodyRect = document.getElementById("background").getBoundingClientRect();
+    let bodyRect = document.getElementsByTagName("body")[0].getBoundingClientRect();
     let rect = map.getBoundingClientRect();
     map.style.left = bodyRect.width / 2 - rect.width / 2 + "px";
     map.style.top = bodyRect.height / 2 - rect.height / 2 + "px";

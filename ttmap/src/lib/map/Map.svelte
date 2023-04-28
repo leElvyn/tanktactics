@@ -4,6 +4,7 @@
 
     let map;
     onMount(async () => {
+        console.log("map")
         main(map);
     });
 </script>
