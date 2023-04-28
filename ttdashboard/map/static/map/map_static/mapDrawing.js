@@ -4,7 +4,7 @@ heartRed.src = "/static/map/map_static/assets/heart-red.png";
 var heartBlack = new Image();
 heartBlack.src = "/static/map/map_static/assets/heart-black.png";
 export async function drawMap(map, game) {
-    await fetchGame();
+    // await fetchGame()
     /*await waitForStaticLoad(heartRed)
     await waitForStaticLoad(heartBlack)*/
     drawGrid(map, game);

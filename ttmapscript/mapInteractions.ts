@@ -8,8 +8,7 @@ export async function registerInteractions(map : HTMLElement) {
 }
 
 function canvasMouseEnter(event: MouseEvent) {
-    // @ts-ignore
-    let element: HTMLElement = event.target;
+    let element: HTMLElement = <HTMLElement> event.target;
 
     let range = document.getElementById("range_" + element.getAttribute("coordinate"));
 
@@ -19,8 +18,7 @@ function canvasMouseEnter(event: MouseEvent) {
 }
 
 function canvasMouseOut(event: MouseEvent) {
-    // @ts-ignore
-    let element: HTMLElement = event.target;
+    let element = <HTMLElement> event.target;
     
     let range = document.getElementById("range_" + element.getAttribute("coordinate"));
     

@@ -39,3 +39,16 @@ class ClientConsumer(AsyncWebsocketConsumer):
             'new_game_data': event["new_game_data"]
         }))
 
+    async def upgrade(self, event):        
+        await self.send(text_data=json.dumps({
+            'event': 'upgrade',
+            'data': event['data'],
+            'new_game_data': event["new_game_data"]
+        }))
+
+    async def transfer(self, event):        
+        await self.send(text_data=json.dumps({
+            'event': 'transfer',
+            'data': event['data'],
+            'new_game_data': event["new_game_data"]
+        }))

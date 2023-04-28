@@ -1,4 +1,4 @@
-import { movePlayer } from "./actions.js";
+import { movePlayer, shootPlayer, upgradeRange } from "./actions.js";
 export async function createSocket(game, map) {
     const socket = new WebSocket('ws://'
         + window.location.host
@@ -12,8 +12,17 @@ export async function createSocket(game, map) {
         game = message.new_game_data;
         switch (event) {
             case 'move':
-                let event = data;
-                movePlayer(event);
+                let moveEvent = data;
+                movePlayer(moveEvent);
+                break;
+            case 'shoot':
+                let shootEvent = data;
+                shootPlayer(shootEvent);
+                break;
+            case 'upgrade':
+                let upgradeEvent = data;
+                console.log(upgradeEvent);
+                upgradeRange(upgradeEvent);
                 break;
         }
         ;

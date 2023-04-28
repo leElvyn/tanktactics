@@ -6,9 +6,9 @@ from discord.ui import Button, View, Select
 from discord.components import ActionRow
 from discord import ButtonStyle, SelectOption, SelectMenu
 
-def get_distance(tank_offender, tank_deffender):
+def get_distance(tank_offender, tank_defender):
     """return the distance between the 2 tanks"""
-    return max(abs((tank_offender["x"] - tank_deffender["x"])), abs((tank_offender["y"] - tank_deffender["y"])))
+    return max(abs((tank_offender["x"] - tank_defender["x"])), abs((tank_offender["y"] - tank_defender["y"])))
 
 def filter_range_players(players, player_x, player_y, range):
     range_players = []
@@ -202,7 +202,7 @@ class NearPlayerSelect(Select):
         cog = self.view.cog
         ctx = self.view.ctx
         url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "attack"
-        data = {"deffender_id": self.values[0]}
+        data = {"defender_id": self.values[0]}
         target_member = await ctx.guild.fetch_member(self.values[0])
         async with cog.session.get(url, json=data) as resp:
             reply = await resp.json()
@@ -210,10 +210,10 @@ class NearPlayerSelect(Select):
                 self.view.disable_all_selects()
                 await interaction.response.send_message("Bang.\n")
                 log_message = f"<@{ctx.user.id}> attacked <@{target_member.id}>.\n"
-                if reply["deffensive_player_dead"]:
+                if reply["defensive_player_dead"]:
                     log_message += f"<@{self.values[0]}> is now dead. "
                 else:
-                    log_message += f"<@{self.values[0]}> now has " + str(reply["deffender_health"]) + " reaming health points."
+                    log_message += f"<@{self.values[0]}> now has " + str(reply["defender_health"]) + " reaming health points."
                 await cog.log(self.view.game, log_message)
                 self.view.stop()
 
@@ -326,7 +326,7 @@ class ShootView(View):
         ctx = self.ctx
         url = cog.get_api_url("guild") + "/" + str(ctx.guild.id) + "/" + "players" + "/" + str(ctx.user.id) + "/" + "transfer"
         print(self.selected_player)
-        data = {"ap_number": int(ap_number), "deffender_id": self.selected_player}
+        data = {"ap_number": int(ap_number), "defender_id": self.selected_player}
         selected_member = ctx.guild.get_member(self.selected_player)
         print(selected_member)
         async with cog.session.get(url, json=data) as resp:

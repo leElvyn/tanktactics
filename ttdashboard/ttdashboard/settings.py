@@ -89,10 +89,10 @@ ASGI_APPLICATION = "ttdashboard.asgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+        'NAME': os.environ.get('POSTGRES_DB', "ttdev"),
+        'USER': os.environ.get('POSTGRES_USER', "ttdev"),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ""),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': 5432,
     }
 }

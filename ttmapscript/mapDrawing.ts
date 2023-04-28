@@ -1,17 +1,15 @@
 import { Game, Player } from "./interfaces";
-import { TILE_SIZE } from "./script.js";
+import { TILE_SIZE } from "./mapMain.js";
 
 var heartRed = new Image();
-heartRed.src = "/static/map/map_static/assets/heart-red.png"
+heartRed.src = "/src/assets/heart-red.png"
 
 var heartBlack = new Image();
-heartBlack.src = "/static/map/map_static/assets/heart-black.png"
+heartBlack.src = "/src/assets/heart-black.png"
 
 
 export async function drawMap(map: HTMLElement, game) {
-    await fetchGame()
-    /*await waitForStaticLoad(heartRed)
-    await waitForStaticLoad(heartBlack)*/
+    // await fetchGame()
     drawGrid(map, game)
     drawPlayers(map, game)
     drawRangeRepresentations(map, game)
@@ -31,11 +29,11 @@ function parseReviver(key, value) {
     return value;
 }
 
-export async function fetchGame() {
-    // @ts-ignore
+export async function fetchGame(url: string) {
     const response = await fetch(url)
 
     // come on JS, go home. You're drunk
+    
     return JSON.parse(await response.text(), parseReviver)
 }
 function drawGrid(map: HTMLElement, game: Game) {

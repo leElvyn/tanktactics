@@ -164,7 +164,9 @@ def get_game(request, guild_id):
     game_json = GameSerializer(game)
     json_data = game_json.data
     json_data["guild_id"] = str(json_data["guild_id"])
-    return JsonResponse(json_data, status=200)
+    response = JsonResponse(json_data, status=200)
+    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5173"
+    return response
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -199,7 +201,7 @@ def move_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player = game.players.filter(discord_id=discord_id).first()
+    player: Player = game.players.filter(discord_id=discord_id).first()
     settings = JSONParser().parse(request)
     player.move(settings["x"], settings["y"])
     return JsonResponse(PlayerSerializer(player).data, status=200)
@@ -210,15 +212,15 @@ def attack_player(request, guild_id, discord_id):
     """
     Attack the player
     Settings : 
-        deffender_id : int
+        defender_id : int
     """
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player = game.players.filter(discord_id=discord_id).first()
+    player: Player = game.players.filter(discord_id=discord_id).first()
     settings = JSONParser().parse(request)
-    deffender_player = game.players.get(discord_id=settings["deffender_id"])
-    reply = player.shoot(deffender_player)
+    defender_player = game.players.get(discord_id=settings["defender_id"])
+    reply = player.shoot(defender_player)
     return JsonResponse(reply, status=200)
 
 @api_view(["GET"])
@@ -227,7 +229,7 @@ def transfer_player(request, guild_id, discord_id):
     """
     Attack the player
     Settings : 
-        deffender_id : int
+        defender_id : int
         ap_number : int
     """
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
@@ -235,8 +237,8 @@ def transfer_player(request, guild_id, discord_id):
         return JsonResponse({"error": "Game not started"}, status=400)
     player = game.players.filter(discord_id=discord_id).first()
     settings = JSONParser().parse(request)
-    deffender_player = game.players.get(discord_id=settings["deffender_id"])
-    reply = player.shoot_ap(deffender_player, settings["ap_number"])
+    defender_player = game.players.get(discord_id=settings["defender_id"])
+    reply = player.shoot_ap(defender_player, settings["ap_number"])
     return JsonResponse(reply, status=200)
 
 @api_view(["GET"])

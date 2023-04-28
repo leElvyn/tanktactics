@@ -6,7 +6,12 @@ import { focusMap } from "./privateMap.js";
 export const TILE_SIZE = 50;
 var map = document.getElementById("map");
 var game;
+import { upgradeRange } from "./actions.js";
 async function main(map) {
+    // DEBUG ONLY 
+    // @ts-ignore
+    window.upgradeRange = upgradeRange;
+    window.map = map;
     registerGestures(map);
     game = await fetchGame();
     await drawMap(map, game);

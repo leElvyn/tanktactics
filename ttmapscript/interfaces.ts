@@ -49,3 +49,13 @@ export interface MoveEvent {
     },
     player: Player
 }
+
+export interface ShootEvent {
+    offensive_player: Player,
+    defensive_player: Player 
+}
+
+export interface UpgradeEvent {
+    player: Player,
+    new_range: number
+}
