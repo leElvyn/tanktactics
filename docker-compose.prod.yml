@@ -14,7 +14,7 @@ services:
   web:
     build: ./ttdashboard
     working_dir: /code
-#    command: python manage.py runserver 0.0.0.0:8000
+    command: ./entrypoint-prod
     volumes:
       - static_files:/code/static
 #      - ./ttdashboard:/code # FOR DEVELOPMENT ONLY

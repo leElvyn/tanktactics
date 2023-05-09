@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:alpine
     volumes:
-      - ./data/db:/var/lib/psql/data
+      - ./data/db:/var/lib/postgresql/data
     restart: unless-stopped
     environment:
       - POSTGRES_DB=ttdev
@@ -14,7 +14,7 @@ services:
   web:
     build: ./ttdashboard
     working_dir: /code
-    command: python manage.py runserver 0.0.0.0:8000 # FOR DEV ONLY
+    command: ./entrypoint-dev
     volumes:
       - static_files:/code/static
       - ./ttdashboard:/code # FOR DEVELOPMENT ONLY
