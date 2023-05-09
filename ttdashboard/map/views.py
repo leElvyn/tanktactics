@@ -296,5 +296,7 @@ def private_map(request, guild_id):
         context["is_focused"] = "true"
     return render(request, 'map/map_private.html.dj', context)
 
-def redirect_map(request):
-    return redirect('/guild/613018525111549953')
+def home_page(request):
+    games = Game.objects.filter(is_ended=False)
+    context = {"games": games}
+    return render(request, 'map/home.html.dj', context)

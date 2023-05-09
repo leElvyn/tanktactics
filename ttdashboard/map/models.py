@@ -217,7 +217,11 @@ class Tank(models.Model):
 
 class Game(models.Model):
     id = models.BigIntegerField(primary_key=True)
+
     guild_id = models.BigIntegerField(verbose_name=_('Guild ID'))
+    guild_name = models.CharField(max_length=30, verbose_name=_('Guild Name'))
+    guild_icon_url = models.URLField(verbose_name=_('Guild Icon URL'))
+
     players = models.ManyToManyField(Player, verbose_name=_('Player List'), )
     allowed_joining = models.BooleanField(verbose_name=_('Is everyone allowed to join ?'))
     max_players = models.IntegerField(verbose_name=_('Max players'))

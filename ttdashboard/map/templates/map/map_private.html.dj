@@ -5,19 +5,19 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="{% static 'map/map_static/style.css' %}">
-    <body>
-        <div id="background">
-            <div id="map"></div>
-        </div>
-    </body>
-    <script>
-    url = "/api/guild/{{ guild_id }}";
-    is_public = {{ public }};
-    is_focused = {{ is_focused }};
-    {% autoescape off %}
-    focus = '{{ focus }}';
-    {% endautoescape %}
-    </script>
-    </head>
-    <script src="{% static 'map/map_static/script.js' %}" type="module"></script>
+</head>
+<body>
+    <div id="background">
+        <div id="map"></div>
+    </div>
+</body>
+<script>
+url = "/api/guild/{{ guild_id }}";
+is_public = {{ public }};
+is_focused = {{ is_focused }};
+{% autoescape off %}
+focus = '{{ focus }}';
+{% endautoescape %}
+</script>
+<script src="{% static 'map/map_static/script.js' %}" type="module"></script>
 </html>

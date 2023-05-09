@@ -15,5 +15,5 @@ urlpatterns = [
     path('api/guild/<int:guild_id>/players/create', views.add_player),
     path('guild/<int:guild_id>', views.public_map),
     path('map/guild/<int:guild_id>', views.private_map),
-    path('', views.redirect_map)
+    path('', views.home_page)
 ]

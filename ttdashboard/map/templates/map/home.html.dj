@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'map/home_static/style.css' %}">
+</head>
+<body>
+    <img src="{% static 'map/home_static/titlelogo.png' %}" alt="titlelogo" class="logo">
+    
+    <div class="guild-container">
+        <span> Current running games :</span>
+        {% for game in games %}
+        <div class="game">
+            {{ game.guild_name }}
+            <img src="{{ game.guild_icon_url }}" class="guild-icon">
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
