@@ -1,0 +1,7 @@
+#! /bin/sh
+
+if [ "$(python manage.py showmigrations | grep '\[ \]')" != "" ]
+then
+    python manage.py migrate
+fi
+daphne ttdashboard.asgi:application -b 0.0.0.0
