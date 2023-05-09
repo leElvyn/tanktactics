@@ -8,6 +8,7 @@ data/
 site/
 
 .vscode/
+.devcontainer/
 ttdev.sql
 
 ttdashboard/docker-compose.yml
