@@ -106,6 +106,7 @@ function mobileDragElement(elmnt: HTMLElement) {
 
 function wheelEvent(event: WheelEvent) {
     event.preventDefault();
+    event.stopPropagation();
     zoom(event.deltaY, event.clientX, event.clientY);
 }
 

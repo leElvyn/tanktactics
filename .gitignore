@@ -4,4 +4,10 @@ __pycache__
 ttdashboard/data
 ttbot/.env
 
+data/
+site/
+
+.vscode/
+ttdev.sql
+
 ttdashboard/docker-compose.yml

@@ -3,7 +3,6 @@
 	import {Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import Sidebar from '$lib/Sidebar.svelte';
 
-	let img = new Image();
 </script>
 <Modal />
 <AppShell>

@@ -10,13 +10,13 @@ const alert: ModalSettings = {
 </script>
 
 <div class="actions-list flex-col items-center flex">
-    <button class="action-button" type="button" on:click={() => {console.log(modalStore);modalStore.trigger(alert)}}>Move</button>
-    <button class="action-button" type="button">Attack</button>
+    <button class="action-button btn variant-filled" type="button" on:click={() => {console.log(modalStore);modalStore.trigger(alert)}}>Move</button>
+    <button class="action-button btn variant-filled" type="button">Attack</button>
 
 </div>
 
 <style>
     .action-button {
-        @apply btn variant-filled mt-4 w-20;
+        @apply  mt-4 w-20;
     }
 </style>

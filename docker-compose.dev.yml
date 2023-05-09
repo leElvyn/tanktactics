@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:alpine
+    volumes:
+      - ./data/db:/var/lib/psql/data
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=ttdev
+      - POSTGRES_USER=ttdev
+      - POSTGRES_PASSWORD=ttdev
+
+  web:
+    build: ./ttdashboard
+    working_dir: /code
+    command: python manage.py runserver 0.0.0.0:8000 # FOR DEV ONLY
+    volumes:
+      - static_files:/code/static
+      - ./ttdashboard:/code # FOR DEVELOPMENT ONLY
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=anything
+      - POSTGRES_DB=ttdev
+      - POSTGRES_USER=ttdev
+      - POSTGRES_PASSWORD=ttdev
+      - POSTGRES_HOST=db
+  
+  map:
+    build: ./ttmap
+    working_dir: /build
+    command: npm run dev # FOR DEV ONLY
+    ports:
+     - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - web
+    volumes:
+      - ./ttmap:/build # FOR DEV ONLY, allows for live reload
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "7623:7623"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+      - static_files:/static
+volumes:
+  postgres_data:
+  caddy_data:
+    external: true
+  caddy_config:
+  static_files:

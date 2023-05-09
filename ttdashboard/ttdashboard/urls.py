@@ -20,6 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("map.urls")),
+    path('auth/v1/', include("auth.urls")),
     path('', include('social_django.urls', namespace='social'))
 #    path('oauth/', include("oauth.urls")),
 ]

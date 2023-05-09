@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext as _
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -102,6 +103,7 @@ class RangeUpgradeEvent(BaseEvent):
 
 class Player(models.Model):
     id = models.BigIntegerField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="profiles", null=True)
     name = models.CharField(max_length=50, verbose_name=_("Name"))
     discord_id = models.BigIntegerField(verbose_name=_("Discord ID"))
     avatar_url = models.URLField(verbose_name=_("Avatar URL"))

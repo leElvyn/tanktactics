@@ -165,7 +165,6 @@ def get_game(request, guild_id):
     json_data = game_json.data
     json_data["guild_id"] = str(json_data["guild_id"])
     response = JsonResponse(json_data, status=200)
-    response.headers["Access-Control-Allow-Origin"] = "http://127.0.0.1:5173"
     return response
 
 @api_view(["POST"])
@@ -188,6 +187,8 @@ def add_player(request, guild_id):
     player.save()
     game.players.add(player)
     return JsonResponse(GameSerializer(game).data, status=201)
+
+###################### GAME ACTIONS ######################
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -299,4 +300,5 @@ def private_map(request, guild_id):
     return render(request, 'map/map_private.html.dj', context)
 
 def redirect_map(request):
+    return HttpResponse("Yeah")
     return redirect('/guild/613018525111549953')

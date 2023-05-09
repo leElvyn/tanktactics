@@ -1,0 +1,27 @@
+{
+        auto_https disable_redirects
+}
+:7623 {
+        
+        handle_path /static* {
+                root * /static
+                file_server
+        }
+
+        handle_path /staticmaps* {
+                root * /staticmaps
+                file_server
+        }
+
+        redir / /map/1 
+
+        handle /map* {
+                reverse_proxy map:3000
+        }
+
+
+        handle {
+                reverse_proxy web:8000
+        }
+}
+

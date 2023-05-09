@@ -27,10 +27,9 @@ export async function main(map: HTMLElement) {
     window.map = map;
 
     registerGestures(map);
-    let gameID = window.location.pathname.split("/")[1];
+    let gameID = window.location.pathname.split("/")[2];
     console.log(gameID)
-    //let url = "/api/guild/" + gameID
-    let url = "http://localhost:8000/api/guild/1";
+    let url = "/api/guild/" + gameID
     game = await fetchGame(url)
     await drawMap(map, game);
     

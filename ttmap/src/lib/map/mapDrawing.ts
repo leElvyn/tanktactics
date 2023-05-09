@@ -1,13 +1,6 @@
 import { Game, Player } from "./interfaces";
 import { TILE_SIZE } from "./mapMain.js";
 
-var heartRed = new Image();
-heartRed.src = "/heart-red.png"
-
-var heartBlack = new Image();
-heartBlack.src = "/heart-black.png"
-
-
 export async function drawMap(map: HTMLElement, game) {
     // await fetchGame()
     drawGrid(map, game)
@@ -114,6 +107,10 @@ function drawRange(ctx: CanvasRenderingContext2D, number: number) {
 }
 
 function drawHeart(ctx: CanvasRenderingContext2D, numberAlive: number) {
+    let heartBlack = new Image();
+    heartBlack.src = "/map/heart-black.png"
+    var heartRed = new Image();
+    heartRed.src = "/map/heart-red.png"
     for (var i = 1; i <= 3; i++) {
         if (numberAlive < i) {
             ctx.drawImage(heartBlack, (5 + i * 100), 380, 90, 90);
