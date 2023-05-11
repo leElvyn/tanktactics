@@ -7,4 +7,6 @@ RUN pip install -r requirements.txt
 COPY . /code/
 VOLUME /code/static
 RUN python manage.py collectstatic
-CMD ["daphne", "ttdashboard.asgi:application", "-b", "0.0.0.0"]
+RUN chmod +x entrypoint-dev
+RUN chmod +x entrypoint-prod
+CMD ["./entrypoint-prod"]

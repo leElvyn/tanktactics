@@ -34,7 +34,7 @@ services:
   map:
     build: ./ttmap
     working_dir: /build
-#    command: npm run dev # FOR DEV ONLY
+    command: node build/index.js # FOR DEV ONLY
     ports:
      - "3000:3000"
     restart: unless-stopped
