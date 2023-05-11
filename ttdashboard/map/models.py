@@ -103,7 +103,7 @@ class RangeUpgradeEvent(BaseEvent):
 
 class Player(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"), related_name="profiles", null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"), null=True)
     name = models.CharField(max_length=50, verbose_name=_("Name"))
     discord_id = models.BigIntegerField(verbose_name=_("Discord ID"))
     avatar_url = models.URLField(verbose_name=_("Avatar URL"))

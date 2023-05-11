@@ -1,4 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
+from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
 
 from .models import Game, Player, Tank, MoveEvent
 
@@ -9,7 +13,7 @@ class TankInline(admin.TabularInline):
 class PlayerAdmin(admin.ModelAdmin):
     inlines = [TankInline]
 
-# Register your models here.
+    # Register your models here.
 class PlayerInline(admin.TabularInline):
     model = Player.game_set.through
 
@@ -22,8 +26,17 @@ class GameAdmin(admin.ModelAdmin):
     ]
     inlines = [PlayerInline]
 
+    
+pset:ReverseManyToOneDescriptor = User.player_set
+
+class PlayerInlineUser(admin.TabularInline):
+    model = Player
+    fields = ["name"]
+    max_num = 0
+
+UserAdmin.inlines = [PlayerInlineUser]
+
 admin.site.register(MoveEvent)
-pass
 admin.site.register(Game, GameAdmin)
 admin.site.register(Player)
 admin.site.register(Tank)
