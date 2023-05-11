@@ -11,4 +11,4 @@ site/
 .devcontainer/
 ttdev.sql
 
-ttdashboard/docker-compose.yml
+docker-compose.yml
