@@ -24,7 +24,7 @@
 
 <div class="actions-list flex-col items-center flex">
 	<button class="action-button btn variant-filled" type="button" on:click={() => {assignVisible(Selected.Move)}}>Move</button>
-{#if selected}
+{#if selected == Selected.Move}
     <MoveInteraction />
 {/if}
 	<button class="action-button btn variant-filled" type="button">Attack</button>

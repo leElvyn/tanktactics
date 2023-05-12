@@ -4,6 +4,10 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
+from django.http import Http404
+
+from rest_framework.exceptions import APIException
+
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
@@ -19,6 +23,12 @@ import map
 import random
 
 # Create your models here.
+
+class BadRequestException(APIException):
+    def __init__(self, detail):
+
+        super().__init__(detail, 400)
+    status_code = 400
 
 
 class BaseEvent(models.Model):
@@ -107,6 +117,7 @@ class Player(models.Model):
     name = models.CharField(max_length=50, verbose_name=_("Name"))
     discord_id = models.BigIntegerField(verbose_name=_("Discord ID"))
     avatar_url = models.URLField(verbose_name=_("Avatar URL"))
+    vote_received = models.IntegerField(default=0)
 
     is_dead = models.BooleanField(verbose_name=_("Is dead?"), default=False)
     ad_vote = models.ForeignKey(
@@ -126,25 +137,25 @@ class Player(models.Model):
         position_y = self.tank.y
 
         if self.is_dead:
-            raise Exception(_("Player is dead"))
+            raise BadRequestException(_("Player is dead"))
 
         if abs(position_x - x) != 1 and abs(position_y - y) != 1:
-            raise Exception(_("Player is either not moving or moving more than 1 tile"))
+            raise BadRequestException(_("Player is either not moving or moving more than 1 tile"))
 
         game_object = self.game_set.all().first()
 
         if abs(x) > game_object.grid_size_x or abs(y) > game_object.grid_size_y:
-            raise Exception(_("Player is outside the map"))
+            raise BadRequestException(_("Player is outside the map"))
 
         if (
             game_object.players.filter(tank__x=position_x, tank__y=position_y).count()
             > 1
         ):
             # the 1 is you
-            raise Exception(_("Player is in another players position"))
+            raise BadRequestException(_("Player is in another players position"))
 
         if self.tank.action_points <= 0:
-            raise Exception(_("Player does not have enough action points"))
+            raise BadRequestException(_("Player does not have enough action points"))
 
         MoveEvent.objects.create(
             player=self,
@@ -175,13 +186,13 @@ class Player(models.Model):
         reply = {"defensive_player_dead": False}
 
         if self.is_dead or defensive_player.is_dead:
-            raise Exception(_("Player is dead"))
+            raise BadRequestException(_("Player is dead"))
 
         if self.tank.action_points <= 0:
-            raise Exception(_("Player does not have enough action points"))
+            raise BadRequestException(_("Player does not have enough action points"))
 
         if utils.math.get_distance(self.tank, defensive_player.tank) > self.tank.range:
-            raise Exception(_("Player is not in range"))
+            raise BadRequestException(_("Player is not in range"))
 
         self.tank.action_points -= 1
 
@@ -220,13 +231,13 @@ class Player(models.Model):
 
     def shoot_ap(self, defensive_player, number_of_ap_to_shoot):
         if self.is_dead or defensive_player.is_dead:
-            raise Exception(_("Player is dead"))
+            raise BadRequestException(_("Player is dead"))
 
         if self.tank.action_points < number_of_ap_to_shoot:
-            raise Exception(_("Player does not have enough action points"))
+            raise BadRequestException(_("Player does not have enough action points"))
 
         if utils.math.get_distance(self.tank, defensive_player.tank) > self.tank.range:
-            raise Exception(_("Player is not in range"))
+            raise BadRequestException(_("Player is not in range"))
 
         self.tank.action_points -= number_of_ap_to_shoot
 
@@ -263,7 +274,7 @@ class Player(models.Model):
     def upgrade_range(self):
         upgrade_cost = self.tank.range - 1
         if self.tank.action_points < upgrade_cost:
-            raise Exception(_("Player does not have enough action points"))
+            raise BadRequestException(_("Player does not have enough action points"))
         self.tank.action_points -= upgrade_cost
         self.tank.range += 1
         event = RangeUpgradeEvent(
@@ -287,12 +298,13 @@ class Player(models.Model):
     def vote(self, player):
         """send the vote of this dead player to player. If player has 3 votes, he gets an ation_point"""
         if not self.is_dead:
-            raise Exception(_("Player is not dead"))
+            raise BadRequestException(_("Player is not dead"))
 
         if self.ad_vote is not None:
-            raise Exception(_("Player already voted"))
+            raise BadRequestException(_("Player already voted"))
 
         self.ad_vote = player
+        player.vote_received += 1
         self.save()
         if Player.objects.filter(ad_vote=player).count() == 3:
             player.tank.action_points += 1
@@ -365,9 +377,11 @@ class Game(models.Model):
     def new_action_day(self):
         self.next_ad_end += datetime.timedelta(minutes=self.ad_duration)
         for player in self.players.all():
+            player:Player = player
             if player.is_dead:
                 player.ad_vote = None
             else:
+                player.vote_received = 0
                 player.tank.action_points += 1
                 player.tank.save()
             player.save()

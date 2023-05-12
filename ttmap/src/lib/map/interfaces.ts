@@ -13,9 +13,10 @@ export interface Player {
     discord_id: number;
     avatar_url: string;
     is_dead: boolean;
-    ad_vote?: any;
+    ad_vote?: Player;
     game_set: number[];
     player_color: string;
+    vote_received?: number;
 }
 
 export interface Game {

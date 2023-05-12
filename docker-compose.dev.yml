@@ -42,6 +42,7 @@ services:
       - web
     volumes:
       - ./ttmap:/build # FOR DEV ONLY, allows for live reload
+      - /usr/local/web-app/node_modules
 
   caddy:
     image: caddy:2-alpine

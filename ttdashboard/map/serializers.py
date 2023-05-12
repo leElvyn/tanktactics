@@ -10,7 +10,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     tank = TankSerializer(read_only=True)
     class Meta:
         model = Player
-        fields = ["id", "name", "tank", "discord_id", "avatar_url", "is_dead", "ad_vote", "game_set", "player_color"]
+        fields = ["id", "name", "tank", "discord_id", "avatar_url", "is_dead", "ad_vote", "game_set", "player_color", "vote_received"]
 
 class GameSerializer(serializers.ModelSerializer):
     players = PlayerSerializer(read_only=True, many=True)

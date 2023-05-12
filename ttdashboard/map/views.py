@@ -323,7 +323,7 @@ def vote_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player = game.players.filter(discord_id=discord_id).first()
+    player: Player = game.players.filter(discord_id=discord_id).first()
     settings = JSONParser().parse(request)
     voted_player = game.players.get(discord_id=settings["target_id"])
     reply = player.vote(voted_player)
