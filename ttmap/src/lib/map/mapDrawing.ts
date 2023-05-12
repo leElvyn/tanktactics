@@ -26,7 +26,7 @@ export async function fetchGame(url: string) {
     const response = await fetch(url)
 
     // come on JS, go home. You're drunk
-    
+
     return JSON.parse(await response.text(), parseReviver)
 }
 function drawGrid(map: HTMLElement, game: Game) {
@@ -111,12 +111,14 @@ function drawHeart(ctx: CanvasRenderingContext2D, numberAlive: number) {
     heartBlack.src = "/map/heart-black.png"
     var heartRed = new Image();
     heartRed.src = "/map/heart-red.png"
-    for (var i = 1; i <= 3; i++) {
-        if (numberAlive < i) {
-            ctx.drawImage(heartBlack, (5 + i * 100), 380, 90, 90);
-        }
-        else {
-            ctx.drawImage(heartRed, (5 + i * 100), 380, 90, 90);
+    heartRed.onload = () => {
+        for (var i = 1; i <= 3; i++) {
+            if (numberAlive < i) {
+                ctx.drawImage(heartBlack, (5 + i * 100), 380, 90, 90);
+            }
+            else {
+                ctx.drawImage(heartRed, (5 + i * 100), 380, 90, 90);
+            }
         }
     }
 }
@@ -136,7 +138,7 @@ function drawRangeRepresentations(map: HTMLElement, game: Game) {
         let rangeDiv = drawRangeRepresentation(player.tank.range, player.player_color);
         let range = player.tank.range;
         rangeDiv.style.left = (player.tank.x - range) * TILE_SIZE + "px";
-        rangeDiv.style.top = ( player.tank.y - range) * TILE_SIZE + "px";
+        rangeDiv.style.top = (player.tank.y - range) * TILE_SIZE + "px";
 
         rangeDiv.id = "range_" + player.tank.x.toString() + "_" + player.tank.y.toString();
         map.appendChild(rangeDiv);
@@ -146,10 +148,10 @@ function drawRangeRepresentations(map: HTMLElement, game: Game) {
 function drawRangeRepresentation(range: number, color: string): HTMLElement {
     let rangeDiv = document.createElement("div");
     rangeDiv.className = "range";
-    rangeDiv.style.width = (range * 2  + 1)*  TILE_SIZE + "px";
+    rangeDiv.style.width = (range * 2 + 1) * TILE_SIZE + "px";
     rangeDiv.style.height = (range * 2 + 1) * TILE_SIZE + "px";
     let new_col = color.replace(/rgb/i, "rgba");
-    new_col = new_col.replace(/\)/i,',0.3)');
+    new_col = new_col.replace(/\)/i, ',0.3)');
     rangeDiv.style.backgroundColor = new_col;
     return rangeDiv
 }

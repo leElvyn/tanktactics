@@ -22,6 +22,7 @@ export interface Game {
     id: number;
     guild_id: number;
     players: Player[];
+    self: Player;
     allowed_joining: boolean;
     max_players: number;
     game_talk_channel: number;

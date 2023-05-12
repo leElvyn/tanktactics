@@ -39,7 +39,8 @@ export async function shootPlayer(event: ShootEvent) {
     projectile.style.transform = `rotate(${angle}rad)`;
 
     projectile.style.backgroundColor = "red";
-    window.map.appendChild(projectile);
+    let map = document.getElementById("map");
+    map.appendChild(projectile);
 
     redrawPlayer(offCanvas.getContext("2d"), event.offensive_player);
 
@@ -64,7 +65,7 @@ export async function shootPlayer(event: ShootEvent) {
     hurtOverlay.style.zIndex = "20"
 
     hurtOverlay.style.backgroundColor = "red";
-    window.map.appendChild(hurtOverlay);
+    map.appendChild(hurtOverlay);
 
 
     await anime({

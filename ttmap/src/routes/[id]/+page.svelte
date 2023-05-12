@@ -1,9 +1,21 @@
 <script lang="ts">
 	import Map from '$lib/map/Map.svelte';
-	import {Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import Sidebar from '$lib/Sidebar.svelte';
+	import { onMount } from 'svelte';
+	import { gameStore } from '$lib/stores/gameStore';
 
+	let promiseResolve: (value: unknown) => void;
+	let gamePromise = new Promise((executor) => {
+		promiseResolve = executor;
+	});
+	gameStore.subscribe((game) => {
+		if (game !== undefined) {
+			promiseResolve(game)
+		}
+	});
 </script>
+
 <Modal />
 <AppShell>
 	<svelte:fragment slot="header">
@@ -14,7 +26,9 @@
 		</AppBar>
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
-		<Sidebar></Sidebar>
+		{#await gamePromise then game}
+			<Sidebar />
+		{/await}
 	</svelte:fragment>
 	<Map />
 </AppShell>

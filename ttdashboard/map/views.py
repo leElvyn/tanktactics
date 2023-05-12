@@ -194,12 +194,18 @@ def create_game(request, guild_id):
 
 
 @api_view(["GET"])
-def get_game(request, guild_id):
+def get_game(request: HttpRequest, guild_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("game_start_date").first()
     if not game:
         raise Http404("Game does not exist")
     game_json = GameSerializer(game)
     json_data = game_json.data
+
+    print(request.user)
+    if request.user.is_authenticated:
+        player_set = game.players.filter(user=request.user)
+        if len(player_set) == 1: # This shouldn't ever be other than 0 or 1
+            json_data["self"] = PlayerSerializer(player_set.first()).data
     json_data["guild_id"] = str(json_data["guild_id"])
     response = JsonResponse(json_data, status=200)
     return response
