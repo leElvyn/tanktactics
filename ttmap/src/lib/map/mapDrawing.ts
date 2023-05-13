@@ -85,6 +85,7 @@ function drawPlayer(player: Player, ctx: CanvasRenderingContext2D) {
     drawHeart(ctx, player.tank.health_points);
     drawActionPoints(ctx, player.tank.action_points);
     drawRange(ctx, player.tank.range);
+    drawReceivedVotes(ctx, player.vote_received);
 }
 
 function drawActionPoints(ctx: CanvasRenderingContext2D, number: number) {
@@ -114,14 +115,31 @@ function drawHeart(ctx: CanvasRenderingContext2D, numberAlive: number) {
     heartRed.onload = () => {
         for (var i = 1; i <= 3; i++) {
             if (numberAlive < i) {
-                ctx.drawImage(heartBlack, (5 + i * 100), 380, 90, 90);
+                ctx.drawImage(heartBlack, (100 + i * 100), 380, 90, 90);
             }
             else {
-                ctx.drawImage(heartRed, (5 + i * 100), 380, 90, 90);
+                ctx.drawImage(heartRed, (100 + i * 100), 380, 90, 90);
             }
         }
     }
 }
+
+function drawReceivedVotes(ctx: CanvasRenderingContext2D, votesReceived: number) {
+    ctx.font = "bold 80px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#e74c3c";
+
+    ctx.translate(150, 75);
+    ctx.rotate(Math.PI / 4);
+    ctx.translate(-150, -75);
+    ctx.fillRect(300, 300, 100, 100);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    ctx.fillStyle = "rgb(70, 70, 70)";
+    ctx.fillText(votesReceived.toString(), 100, 440);
+}
+
 function centerMap(map: HTMLElement) {
     let bodyRect = document.getElementsByTagName("body")[0].getBoundingClientRect();
     let rect = map.getBoundingClientRect();

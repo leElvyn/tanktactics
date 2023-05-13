@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Fa from 'svelte-fa/src/fa.svelte';
-	import { faArrowLeft, faArrowRight, faArrowDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
+	import { faArrowLeft, faArrowRight, faArrowDown, faArrowUp,  } from '@fortawesome/free-solid-svg-icons';
 
     import { scale } from "svelte/transition"
 
