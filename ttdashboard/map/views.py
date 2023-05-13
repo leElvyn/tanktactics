@@ -17,7 +17,7 @@ from map import tasks
 import datetime
 
 import ballance
-from map.permissions import SafeAndAuth, SelfOrAdmin
+from map.permissions import SafeAndAuth, SelfOrAdmin, IsAdmin
 
 
 # Create your views here.
@@ -127,7 +127,7 @@ class playerDetail(APIView):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdmin])
 def create_game(request, guild_id):
     """
     Create a new game
@@ -212,7 +212,7 @@ def get_game(request: HttpRequest, guild_id):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdmin])
 def add_player(request, guild_id):
     """
     Create and adds a new player to the game
@@ -241,7 +241,7 @@ def add_player(request, guild_id):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([SelfOrAdmin])
 def move_player(request, guild_id, player_id):
     """
     Move the player
@@ -258,8 +258,9 @@ def move_player(request, guild_id, player_id):
     return JsonResponse(PlayerSerializer(player).data, status=200)
 
 
+
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([SelfOrAdmin])
 def attack_player(request, guild_id, player_id):
     """
     Attack the player
@@ -276,8 +277,9 @@ def attack_player(request, guild_id, player_id):
     return JsonResponse(reply, status=200)
 
 
+
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([SelfOrAdmin])
 def transfer_player(request, guild_id, player_id):
     """
     Attack the player
@@ -295,8 +297,9 @@ def transfer_player(request, guild_id, player_id):
     return JsonResponse(reply, status=200)
 
 
+
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([SelfOrAdmin])
 def upgrade_player(request, guild_id, player_id):
     """
     Upgrade the player
@@ -313,7 +316,7 @@ def upgrade_player(request, guild_id, player_id):
 
 
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])
+@permission_classes([SelfOrAdmin])
 def vote_player(request: HttpRequest, guild_id, player_id):
     """
     Vote for a player. Only when dead.
