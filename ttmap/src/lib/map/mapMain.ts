@@ -3,18 +3,14 @@ import { drawMap, fetchGame } from "./mapDrawing.js";
 import { registerInteractions } from "./mapInteractions.js"
 import { gameStore } from "../stores/gameStore.js"
 import { createSocket } from "./socket";
+import { Game } from "./interfaces";
 
 export const TILE_SIZE = 50;
 
 
-export async function main(map: HTMLElement) {
+export async function main(map: HTMLElement, game: Game) {
     registerGestures(map);
 
-    let gameID = window.location.pathname.split("/")[2];
-    let url = "/api/guild/" + gameID
-    let game = await fetchGame(url)
-
-    gameStore.set(game);
 
     await drawMap(map, game);
 

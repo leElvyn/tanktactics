@@ -86,7 +86,7 @@ class PlayerList(APIView):
         return JsonResponse(serializer.data, safe=False)
 
 
-def get_object(self, request: HttpRequest, guild_id, player_id):
+def get_player(request: HttpRequest, guild_id, player_id):
     game = (
         Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     )
@@ -106,14 +106,14 @@ class playerDetail(APIView):
     permission_classes = [SelfOrAdmin|SafeAndAuth]
 
     def get(self, request, guild_id, player_id):
-        player = get_object(request, guild_id, player_id)
+        player = get_player(request, guild_id, player_id)
         serializer = PlayerSerializer(player)
         return JsonResponse(serializer.data)
 
     def put(self, request, guild_id, player_id):
         """pretty broken"""
-        player = get_object(guild_id, player_id)
-        data = JSONParser().parse(request)
+        player = get_player(guild_id, player_id)
+        data = request.data
         serializer = PlayerSerializer(player, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -121,7 +121,7 @@ class playerDetail(APIView):
         return JsonResponse(serializer.errors, status=400)
 
     def delete(self, request, guild_id, player_id):
-        player = get_object(guild_id, player_id)
+        player = get_player(guild_id, player_id)
         player.delete()
         return HttpResponse(status=204)
 
@@ -155,7 +155,7 @@ def create_game(request, guild_id):
             {"error": "There is already a game on this guild"}, status=409
         )
 
-    settings = JSONParser().parse(request)
+    settings = request.data
     if settings is None:
         return JsonResponse({"error": "No settings provided"}, status=400)
     if not validate_new_game(settings):
@@ -224,7 +224,7 @@ def add_player(request, guild_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game:
         raise Http404("Game does not exist")
-    player_settings = JSONParser().parse(request)
+    player_settings = request.data
     if game.is_started:
         return JsonResponse({"error": "Game already started"}, status=400)
     player = Player(
@@ -240,9 +240,9 @@ def add_player(request, guild_id):
 ###################### GAME ACTIONS ######################
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def move_player(request, guild_id, discord_id):
+def move_player(request, guild_id, player_id):
     """
     Move the player
     Settings :
@@ -252,15 +252,15 @@ def move_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player: Player = game.players.filter(discord_id=discord_id).first()
-    settings = JSONParser().parse(request)
+    player: Player = get_player(request, guild_id, player_id)
+    settings = request.data
     player.move(settings["x"], settings["y"])
     return JsonResponse(PlayerSerializer(player).data, status=200)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def attack_player(request, guild_id, discord_id):
+def attack_player(request, guild_id, player_id):
     """
     Attack the player
     Settings :
@@ -269,16 +269,16 @@ def attack_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player: Player = game.players.filter(discord_id=discord_id).first()
-    settings = JSONParser().parse(request)
-    defender_player = game.players.get(discord_id=settings["defender_id"])
+    player: Player = get_player(request, guild_id, player_id)
+    settings = request.data
+    defender_player = game.players.get(id=settings["defender_id"])
     reply = player.shoot(defender_player)
     return JsonResponse(reply, status=200)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def transfer_player(request, guild_id, discord_id):
+def transfer_player(request, guild_id, player_id):
     """
     Attack the player
     Settings :
@@ -288,16 +288,16 @@ def transfer_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player = game.players.filter(discord_id=discord_id).first()
-    settings = JSONParser().parse(request)
-    defender_player = game.players.get(discord_id=settings["defender_id"])
+    player: Player = get_player(request, guild_id, player_id)
+    settings = request.data
+    defender_player = game.players.get(id=settings["defender_id"])
     reply = player.shoot_ap(defender_player, settings["ap_number"])
     return JsonResponse(reply, status=200)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def upgrade_player(request, guild_id, discord_id):
+def upgrade_player(request, guild_id, player_id):
     """
     Upgrade the player
     Settings :
@@ -306,15 +306,15 @@ def upgrade_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player = game.players.filter(discord_id=discord_id).first()
-    settings = JSONParser().parse(request)
+    player: Player = get_player(request, guild_id, player_id)
+    settings = request.data
     reply = player.upgrade_range()
     return JsonResponse(reply, status=200)
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def vote_player(request, guild_id, discord_id):
+def vote_player(request: HttpRequest, guild_id, player_id):
     """
     Vote for a player. Only when dead.
     Settings :
@@ -323,10 +323,11 @@ def vote_player(request, guild_id, discord_id):
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:
         return JsonResponse({"error": "Game not started"}, status=400)
-    player: Player = game.players.filter(discord_id=discord_id).first()
-    settings = JSONParser().parse(request)
-    voted_player = game.players.get(discord_id=settings["target_id"])
+    player: Player = get_player(request, guild_id, player_id)
+    settings = request.data
+    voted_player = game.players.get(id=settings["target_id"])
     reply = player.vote(voted_player)
+    reply["game"] = GameSerializer(game, player).data
     return JsonResponse(reply, status=200)
 
 

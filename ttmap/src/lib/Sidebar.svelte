@@ -5,16 +5,31 @@
 	import { get } from 'svelte/store';
 	import type { Game } from './map/interfaces';
 	import { gameStore } from './stores/gameStore';
+	import { onMount } from 'svelte';
 
 	let game = get(gameStore) as Game;
+
+    // This is used in interactions to check if the map should zoom or not
+	let hovered = false;
+    let sidebarElement: HTMLElement;
+    $:{
+        if (sidebarElement != null) {
+            sidebarElement.setAttribute("hovered", String(hovered))
+        }
+    }
 </script>
 
 <div
 	class="md:visible invisible
-            absolute right-0 h-screen w-1/6 bg-slate-500 items-center
+            absolute right-0 h-screen w-3/12 bg-slate-500 items-center
             flex flex-col"
-	transition:slide>
-
+    id="sidebarElement"
+	transition:slide
+    bind:this={sidebarElement}
+	on:mouseover={() => {hovered = true;}}
+	on:focus ={() => {hovered = true;}}
+	on:mouseout ={() => {hovered = false;}}
+	on:blur ={() => {hovered = false;}}>
 	<Stats />
 	{#if !game.self.is_dead}
 		<ActionList />

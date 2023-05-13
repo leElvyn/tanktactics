@@ -2,10 +2,11 @@
 	import type { Game } from './map/interfaces';
 	import { gameStore } from './stores/gameStore';
 	import { get } from 'svelte/store';
+	import VoteForm from './voteForm.svelte';
 
 	let game: Game = get(gameStore) as Game;
 
-    gameStore.subscribe((value) => {
+	gameStore.subscribe((value) => {
 		game = value as Game;
 	});
 	let label = '';
@@ -19,10 +20,9 @@
 		}
 	}
 
-	let voteSelectVisible;
+	let voteSelectVisible = false;
 </script>
-
-<div class="card p-4 m-3 ml-4 mr-4 w-10/12 flex justify-center">
+<div class="card p-4 m-3 ml-4 mr-4 w-11/12 flex justify-center">
 	{#if !game.self.is_dead}
 		<span class="font-sans font-semibold text-center">
 			{game.self.name} &nbsp;&nbsp;
@@ -37,9 +37,15 @@
 	{:else}
 		<div class="flex justify-center w-full">
 			{#if game.self.ad_vote}
-				{game.self.ad_vote?.name}
+				You voted for : {game.self.ad_vote?.name}
+			{:else if !voteSelectVisible}
+				<button
+					class="action-button btn variant-filled"
+					type="button"
+					on:click={() => (voteSelectVisible = true)}>Vote</button
+				>
 			{:else}
-				<button class="action-button btn variant-filled" type="button">Vote</button>
+				<VoteForm bind:voteSelectVisible />
 			{/if}
 		</div>
 	{/if}
