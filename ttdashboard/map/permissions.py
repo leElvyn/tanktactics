@@ -9,9 +9,6 @@ from map.models import Player, Game
 
 
 class SelfOrAdmin(permissions.BasePermission):
-    """
-    Global permission check for blocked IPs.
-    """
 
     def has_permission(self, request: HttpRequest, view):
         player_id = view.kwargs.get("player_id")
@@ -27,9 +24,11 @@ class SelfOrAdmin(permissions.BasePermission):
 
 
 class SafeAndAuth(permissions.BasePermission):
-    """
-    Global permission check for blocked IPs.
-    """
 
     def has_permission(self, request: HttpRequest, view):
         return request.method in permissions.SAFE_METHODS and request.user is not None
+
+class IsAdmin(permissions.BasePermission):
+
+    def has_permission(self, request: HttpRequest, view):
+        return request.user.has_perm("api_admin")
