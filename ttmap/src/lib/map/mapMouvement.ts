@@ -5,16 +5,16 @@ export async function registerGestures(mapDiv: HTMLElement) {
     mobileDragElement(map);
     map.style.transform = "scale(1.01)";
     document.body.onwheel = wheelEvent;
-/*    // @ts-ignore
-    let mc = new Hammer(document.body);
-    // @ts-ignore
-    let pinch = new Hammer.Pinch();
-
-    mc.add(pinch)
-
-    mc.on("pinch", function(ev) { 
-        //MOTHER FUCKING FUCK THIS SHIT
-    })*/
+    /*    // @ts-ignore
+        let mc = new Hammer(document.body);
+        // @ts-ignore
+        let pinch = new Hammer.Pinch();
+    
+        mc.add(pinch)
+    
+        mc.on("pinch", function(ev) { 
+            //MOTHER FUCKING FUCK THIS SHIT
+        })*/
 
 }
 
@@ -30,6 +30,7 @@ function dragElement(elmnt: HTMLElement) {
     document.body.onmousedown = dragMouseDown;
 
     function dragMouseDown(e: MouseEvent) {
+        if (document.getElementById("sidebarElement").getAttribute("hovered") == "false") {
         e.preventDefault();
         // get the mouse cursor position at startup:
         pos3 = e.clientX;
@@ -37,6 +38,7 @@ function dragElement(elmnt: HTMLElement) {
         document.onmouseup = closeDragElement;
         // call a function whenever the cursor moves:
         document.onmousemove = elementDrag;
+        }
     }
 
     function elementDrag(e: MouseEvent) {
@@ -105,21 +107,23 @@ function mobileDragElement(elmnt: HTMLElement) {
 }
 
 function wheelEvent(event: WheelEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-    zoom(event.deltaY, event.clientX, event.clientY);
+    if (document.getElementById("sidebarElement").getAttribute("hovered") == "false") {
+        event.preventDefault();
+        event.stopPropagation();
+        zoom(event.deltaY, event.clientX, event.clientY);
+    }
 }
 
-function zoom(deltaY: number, clientX: number, clientY:number) {
+function zoom(deltaY: number, clientX: number, clientY: number) {
     realScale += deltaY * -0.003;
-    realScale = Math.min(Math.max(-2,realScale), 3);
+    realScale = Math.min(Math.max(-2, realScale), 3);
     // Restrict scale
     scale = Math.min(Math.max(0, Math.exp(realScale)), 20);
     let oldRect = map.getBoundingClientRect();
-    
+
     let oldRelativeMousePositionX = clientX - oldRect.left;
-    let posFromCenterX = (oldRect.width / 2) - oldRelativeMousePositionX 
-    
+    let posFromCenterX = (oldRect.width / 2) - oldRelativeMousePositionX
+
     let oldRelativeMousePositionY = clientY - oldRect.top;
     let posFromCenterY = (oldRect.height / 2) - oldRelativeMousePositionY
     // Apply scale transform
@@ -133,7 +137,7 @@ function zoom(deltaY: number, clientX: number, clientY:number) {
     let newPositionOffsetX = posFromCenterX * scaleRatioX
     let newPositionOffsetY = posFromCenterY * scaleRatioY
 
-    
+
     map.style.left = (parseInt(map.style.left) + newPositionOffsetX - posFromCenterX) + "px"
     map.style.top = (parseInt(map.style.top) + newPositionOffsetY - posFromCenterY) + "px"
 }

@@ -4,19 +4,18 @@
 	import Sidebar from '$lib/Sidebar.svelte';
 	import { onMount } from 'svelte';
 	import { gameStore } from '$lib/stores/gameStore';
-	import type { Game } from '$lib/map/interfaces';
+	import VoteForm from '$lib/voteForm.svelte';
 
-	let promiseResolve: (value: Game) => void;
-	let gamePromise = new Promise<Game>((executor) => {
+	let promiseResolve: (value: unknown) => void;
+	let gamePromise = new Promise((executor) => {
 		promiseResolve = executor;
 	});
 	gameStore.subscribe((game) => {
 		if (game !== undefined) {
-			promiseResolve(game);
+			promiseResolve(game)
 		}
 	});
 </script>
-
 <Modal />
 <AppShell>
 	<svelte:fragment slot="header">
@@ -28,9 +27,7 @@
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
 		{#await gamePromise then game}
-			{#if game.self}
-				<Sidebar />
-			{/if}
+			<Sidebar />
 		{/await}
 	</svelte:fragment>
 	<Map />
