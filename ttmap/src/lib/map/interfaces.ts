@@ -35,7 +35,7 @@ export interface Game {
     ad_duration: number;
     is_started: boolean;
     is_ended: boolean;
-    next_ad_end: Date;
+    next_ad_end: string; // iso date string
     game_start_date: Date;
 }
 
@@ -60,4 +60,9 @@ export interface ShootEvent {
 export interface UpgradeEvent {
     player: Player,
     new_range: number
+}
+
+export interface VoteEvent {
+    voting_player: Player,
+    receiving_player: Player
 }

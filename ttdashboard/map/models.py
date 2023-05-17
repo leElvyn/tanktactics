@@ -1,4 +1,6 @@
+from math import e
 from django.db import models
+from django.db.models.fields import related
 from django.utils.translation import gettext as _
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -47,7 +49,6 @@ class MoveEvent(BaseEvent):
     old_x = models.IntegerField(verbose_name=_("Old X"))
     old_y = models.IntegerField(verbose_name=_("Old Y"))
 
-
 class ShootEvent(BaseEvent):
     offensive_player = models.ForeignKey(
         "Player",
@@ -74,7 +75,6 @@ class ShootEvent(BaseEvent):
         related_name="shoot_defensive_tank",
         null=True,
     )
-
 
 class TransferEvent(BaseEvent):
     offensive_player = models.ForeignKey(
@@ -103,13 +103,19 @@ class TransferEvent(BaseEvent):
         null=True,
     )
 
-
 class RangeUpgradeEvent(BaseEvent):
     player = models.ForeignKey(
         "Player", on_delete=models.CASCADE, verbose_name=_("Player")
     )
     new_range = models.IntegerField(verbose_name=_("New Range"))
 
+class VoteEvent(BaseEvent):
+    voting_player = models.ForeignKey(
+        "Player", on_delete=models.CASCADE, verbose_name=_("Voting Player"), related_name="voting_player_set"
+    )
+    receiving_player = models.ForeignKey(
+        "Player", on_delete=models.CASCADE, verbose_name=_("Player receiving vote"), related_name="receiving_player_set"
+    )
 
 class Player(models.Model):
     id = models.BigIntegerField(primary_key=True)
@@ -148,8 +154,8 @@ class Player(models.Model):
             raise BadRequestException(_("Player is outside the map"))
 
         if (
-            game_object.players.filter(tank__x=position_x, tank__y=position_y).count()
-            > 1
+            Tank.objects.filter(player__game=game_object,x=x, y=y).count()
+            > 0
         ):
             # the 1 is you
             raise BadRequestException(_("Player is in another players position"))
@@ -311,7 +317,22 @@ class Player(models.Model):
             player.tank.save()
         self.save()
         player.save()
+        
+        event = VoteEvent(game=Game, voting_player=self, receiving_player=player)
+        event.save()
+
         reply = {"vote_number": Player.objects.filter(ad_vote=player).count()}
+
+        broadcast_event(
+            self.game_set.all().first(),
+            "vote",
+            {
+                "voting_player": map.serializers.PlayerSerializer(self).data,
+                "receiving_player": map.serializers.PlayerSerializer(player).data,
+                "new_range": self.tank.range
+            },
+        )
+
         return reply
 
     def __str__(self):
@@ -386,28 +407,43 @@ class Game(models.Model):
                 player.tank.save()
             player.save()
         self.save()
+        tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
 
     def start_game(self):
-        self.is_started = True
-        self.save()
         self.next_ad_end = self.game_start_date + datetime.timedelta(
             seconds=self.ad_duration
         )
+
+        tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
 
         grid_size_x, grid_size_y = ballance.get_grid_size(self.players.count())
         self.grid_size_x = grid_size_x
         self.grid_size_y = grid_size_y
 
+        positions = {} 
+        for i in range(len(self.players.all())):
+            while True:
+                x = random.randint(0, grid_size_x)
+                y = random.randint(0, grid_size_y)
+                if positions.get(str(x) + "-"+ str(y)):
+                    continue
+                else:
+                    positions[str(x) + "-"+ str(y)] = {"x": x, "y": y}
+                    break
+        
+        pos = list(positions.values())
+
         for player in self.players.all():
+            position = pos.pop()
             tank = Tank(
                 player=player,
-                x=random.randint(0, grid_size_x),
-                y=random.randint(0, grid_size_y),
+                x=position["x"],
+                y=position["y"],
             )
-            tank.save()
             tank.save()
             player.player_color = f"rgb({random.randint(50, 190)}, {random.randint(50, 190)}, {random.randint(50, 190)})"
             player.save()
+        self.is_started = True
         self.save()
 
     def finish_game(self):

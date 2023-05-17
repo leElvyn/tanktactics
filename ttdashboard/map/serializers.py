@@ -31,11 +31,19 @@ class GameSerializer(serializers.ModelSerializer):
             super().__init__(instance, **kwargs)
 
     def get_self(self, obj):
-        
         return self.self_data
+
     self = serializers.SerializerMethodField()
 
     players = PlayerSerializer(read_only=True, many=True)
     class Meta:
         model = Game
         fields = ["id", "guild_id", "players", "allowed_joining", "max_players", "game_talk_channel", "commands_channel", "logs_channel", "grid_size_x", "grid_size_y", "is_action_day_1d", "ad_duration", "is_started", "is_ended", "next_ad_end", "game_start_date", "self"]
+
+class EventSerializer(serializers.ModelSerializer):
+    def __init__(self, instance=None, **kwargs):
+        self.Meta.model = instance.__class__
+        super().__init__(instance, **kwargs)
+
+    class Meta:
+        model = None

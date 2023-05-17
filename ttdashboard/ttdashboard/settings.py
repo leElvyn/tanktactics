@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "background_task",
     "rest_framework.authtoken",
     "social_django",
+    "admin_reorder",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "admin_reorder.middleware.ModelAdminReorder",
 ]
 
 ROOT_URLCONF = "ttdashboard.urls"
@@ -156,8 +158,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
     ],
 }
 
@@ -167,3 +169,14 @@ AUTHENTICATION_BACKENDS = [
     "auth.backends.ProloginOpenId",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# Admin Reorder
+
+ADMIN_REORDER = (
+    "auth",
+    "rest_framework.authtoken",
+    "background_task",
+    "social_django",
+    {"app": "map", "label": "Map Objects", "models": ("map.Game", "map.Player", "map.Tank")},
+    {"app": "map", "label": "Map Logs", "models": ("map.MoveEvent", "map.ShootEvent", "map.TransferEvent", "map.RangeUpgradeEvent", "map.VoteEvent")}
+)

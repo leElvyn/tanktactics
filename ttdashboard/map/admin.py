@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.db.models.fields.related_descriptors import ReverseManyToOneDescriptor
 
-from .models import Game, Player, Tank, MoveEvent
+from .models import BaseEvent, Game, Player, ShootEvent, Tank, MoveEvent, TransferEvent, VoteEvent, RangeUpgradeEvent
 
 class TankInline(admin.TabularInline):
     model = Tank
@@ -37,6 +37,11 @@ class PlayerInlineUser(admin.TabularInline):
 UserAdmin.inlines = [PlayerInlineUser]
 
 admin.site.register(MoveEvent)
+admin.site.register(ShootEvent)
+admin.site.register(TransferEvent)
+admin.site.register(RangeUpgradeEvent)
+admin.site.register(VoteEvent)
+
 admin.site.register(Game, GameAdmin)
 admin.site.register(Player)
 admin.site.register(Tank)

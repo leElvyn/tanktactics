@@ -42,5 +42,7 @@ export function movePlayer(event: MoveEvent) {
     redrawPlayer(playerCanvas.getContext("2d"), event.player);
     let new_position = (parseInt(event.position.x) + event.direction.x) + "_" + (parseInt(event.position.y) + event.direction.y);
     playerCanvas.id = "player_" + new_position;
+    playerCanvas.setAttribute("position", new_position)
     rangeDiv.id = "range_" + new_position;
+    rangeDiv.setAttribute("position", new_position)
 }

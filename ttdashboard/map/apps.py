@@ -11,6 +11,5 @@ class MapConfig(AppConfig):
     def ready(self):
         if sys.argv[1] == 'runserver':
             from map import tasks
-            background_task.models.Task.objects.filter(task_name='map.tasks.check_action_day').delete()
-            tasks.check_action_day(repeat=5)
+            background_task.models.CompletedTask.objects.all().delete()
             subprocess.Popen(shlex.split(f"python {os.getcwd()}/manage.py process_tasks"))
