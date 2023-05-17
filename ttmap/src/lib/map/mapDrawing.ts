@@ -1,5 +1,5 @@
 import { Game, Player } from "./interfaces";
-import { TILE_SIZE } from "./mapMain.js";
+import { TILE_SIZE } from "./mapMain";
 
 export async function drawMap(map: HTMLElement, game) {
     // await fetchGame()

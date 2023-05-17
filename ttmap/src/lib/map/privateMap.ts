@@ -1,4 +1,4 @@
-import { TILE_SIZE } from "./mapMain.js"
+import { TILE_SIZE } from "./mapMain"
 
 export function focusMap(map: HTMLElement, grid_size_x: number, grid_size_y: number) {
     document.getElementById("background").style.background = "#333333"

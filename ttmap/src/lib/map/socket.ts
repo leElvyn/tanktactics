@@ -1,4 +1,6 @@
-import { movePlayer, shootPlayer, upgradeRange } from "./actions.js"
+import { movePlayer, shootPlayer, upgradeRange } from "./actions"
+import { transferToPlayer } from "./actions/transfer";
+import { vote } from "./actions/vote";
 import { Game, MoveEvent, ShootEvent, UpgradeEvent, VoteEvent } from "./interfaces"
 
 export async function createSocket(game: Game, map: HTMLElement) {
@@ -9,7 +11,7 @@ export async function createSocket(game: Game, map: HTMLElement) {
         + '/'
     );
 
-    socket.onmessage = function (e) {
+    socket.onmessage = async function (e) {
         const message = JSON.parse(e.data);
         const event = message.event;
         const data = message.data;
@@ -32,13 +34,13 @@ export async function createSocket(game: Game, map: HTMLElement) {
                 break;
             case 'transfer':
                 let transferEvent: ShootEvent = data;
-                console.log(upgradeEvent);
-                upgradeRange(upgradeEvent);
+                console.log(transferEvent);
+                await transferToPlayer(transferEvent);
                 break;
             case 'vote':
                 let voteEvent: VoteEvent = data;
-                console.log(upgradeEvent);
-                upgradeRange(upgradeEvent);
+                console.log(voteEvent);
+                await vote(voteEvent);
                 break;
         };
     }

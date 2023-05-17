@@ -1,9 +1,9 @@
 
 import { MoveEvent, UpgradeEvent } from "../interfaces";
-import { redrawPlayer } from "../mapDrawing.js";
-import { TILE_SIZE } from "../mapMain.js";
-import anime from "../anime.js"
-import { notifyMe } from "../notifications.js";
+import { redrawPlayer } from "../mapDrawing";
+import { TILE_SIZE } from "../mapMain";
+import anime from "../anime"
+import { notifyMe } from "../notifications";
 
 export async function upgradeRange(event: UpgradeEvent) {
     let position_string = event.player.tank.x + "_" + event.player.tank.y

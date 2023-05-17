@@ -1,7 +1,7 @@
 import { MoveEvent } from "../interfaces";
-import { redrawPlayer } from "../mapDrawing.js";
-import { TILE_SIZE } from "../mapMain.js";
-import anime from "../anime.js"
+import { redrawPlayer } from "../mapDrawing";
+import { TILE_SIZE } from "../mapMain";
+import anime from "../anime"
 
 export function movePlayer(event: MoveEvent) {
     let position_string = event.position.x + "_" + event.position.y

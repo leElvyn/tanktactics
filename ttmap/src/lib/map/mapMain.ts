@@ -1,7 +1,7 @@
-import { registerGestures } from "./mapMouvement.js";
-import { drawMap, fetchGame } from "./mapDrawing.js";
-import { registerInteractions } from "./mapInteractions.js"
-import { gameStore } from "../stores/gameStore.js"
+import { registerGestures } from "./mapMouvement";
+import { drawMap, fetchGame } from "./mapDrawing";
+import { registerInteractions } from "./mapInteractions"
+import { gameStore } from "../stores/gameStore"
 import { createSocket } from "./socket";
 import { Game } from "./interfaces";
 import { transferToPlayer } from "./actions/transfer";

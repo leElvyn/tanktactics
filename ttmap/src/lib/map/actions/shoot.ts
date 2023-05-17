@@ -1,6 +1,6 @@
-import anime, { speed } from "../anime.js";
+import anime, { speed } from "../anime";
 import { ShootEvent } from "../interfaces";
-import { redrawPlayer } from "../mapDrawing.js";
+import { redrawPlayer } from "../mapDrawing";
 
 
 export async function shootPlayer(event: ShootEvent) {
