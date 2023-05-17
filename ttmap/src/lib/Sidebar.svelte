@@ -2,12 +2,13 @@
 	import ActionList from './actionList.svelte';
 	import { slide } from 'svelte/transition';
 	import Stats from './stats.svelte';
-	import { get } from 'svelte/store';
 	import type { Game } from './map/interfaces';
 	import { gameStore } from './stores/gameStore';
 	import { onMount } from 'svelte';
+	import { selfStore } from './stores/selfStore';
 
-	let game = get(gameStore) as Game;
+	let game = $gameStore;
+	let self = $selfStore;
 
     // This is used in interactions to check if the map should zoom or not
 	let hovered = false;
@@ -31,7 +32,7 @@
 	on:mouseout ={() => {hovered = false;}}
 	on:blur ={() => {hovered = false;}}>
 	<Stats />
-	{#if !game.self.is_dead}
+	{#if !self?.is_dead}
 		<ActionList />
 	{/if}
 </div>

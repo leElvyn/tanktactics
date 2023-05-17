@@ -26,7 +26,8 @@ def snowflake(object, original_id) -> int:
         "<class 'map.models.MoveEvent'>": 5,
         "<class 'map.models.ShootEvent'>": 5,
         "<class 'map.models.TransferEvent'>": 6,
-        "<class 'map.models.RangeUpgradeEvent'>": 7
+        "<class 'map.models.RangeUpgradeEvent'>": 7,
+        "<class 'map.models.VoteEvent'>": 8
     }
     if "counter" not in globals():
         global counter

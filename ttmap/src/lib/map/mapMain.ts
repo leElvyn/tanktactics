@@ -1,5 +1,5 @@
 import { registerGestures } from "./mapMouvement";
-import { drawMap, fetchGame } from "./mapDrawing";
+import { drawMap } from "./mapDrawing";
 import { registerInteractions } from "./mapInteractions"
 import { gameStore } from "../stores/gameStore"
 import { createSocket } from "./socket";

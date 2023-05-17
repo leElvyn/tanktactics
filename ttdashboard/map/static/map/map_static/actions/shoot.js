@@ -1,7 +1,6 @@
 import anime from "../anime.js";
 import { redrawPlayer } from "../mapDrawing.js";
 export async function shootPlayer(event) {
-    console.log(event);
     // off = offensive player
     // def = defending player
     let offPosition = event.offensive_player.tank.x + "_" + event.offensive_player.tank.y;

@@ -10,8 +10,10 @@
 	import { scale } from 'svelte/transition';
 	import { getCookie } from '$lib/utils';
 	import { gameStore } from '../stores/gameStore';
+	import { selfStore } from '$lib/stores/selfStore';
 
 	let game = $gameStore;
+	let self = $selfStore;
 
 	async function move(direction: number[]) {
 		// direction is a tuple that can be added to current coordinates.
@@ -22,8 +24,8 @@
 				'X-CSRFToken': getCookie('csrftoken')
 			},
 			body: JSON.stringify({
-				x: game!.self.tank.x + direction[0],
-				y: game!.self.tank.y + direction[1]
+				x: self!.tank.x + direction[0],
+				y: self!.tank.y + direction[1]
 			}),
 			credentials: 'same-origin'
 		});
@@ -43,7 +45,7 @@
 		<button type="button" class="invisible m-1 btn-icon variant-filled"
 			><Fa icon={faArrowLeft} /></button
 		>
-		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([0, -1])} disabled={game?.self.tank.y == 0}
+		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([0, -1])} disabled={self?.tank.y == 0}
 			><Fa icon={faArrowUp} /></button
 		>
 		<button type="button" class="invisible m-1 btn-icon variant-filled"
@@ -51,13 +53,13 @@
 		>
 	</div>
 	<div>
-		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([-1, 0])} disabled={game?.self.tank.x == 0}
+		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([-1, 0])} disabled={self?.tank.x == 0}
 			><Fa icon={faArrowLeft} /></button
 		>
 		<button type="button" class="invisible m-1 btn-icon variant-filled"
 			><Fa icon={faArrowLeft} /></button
 		>
-		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([1, 0])} disabled={game?.self.tank.x == game?.grid_size_x}
+		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([1, 0])} disabled={self?.tank.x == game?.grid_size_x}
 			><Fa icon={faArrowRight} /></button
 		>
 	</div>
@@ -65,7 +67,7 @@
 		<button type="button" class="invisible m-1 btn-icon variant-filled"
 			><Fa icon={faArrowLeft} /></button
 		>
-		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([0, 1])} disabled={game?.self.tank.y == game?.grid_size_y}
+		<button type="button" class="m-1 btn-icon variant-filled" on:click={() => move([0, 1])} disabled={self?.tank.y == game?.grid_size_y}
 			><Fa icon={faArrowDown} /></button
 		>
 		<button type="button" class="invisible m-1 btn-icon variant-filled"

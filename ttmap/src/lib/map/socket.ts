@@ -2,6 +2,8 @@ import { movePlayer, shootPlayer, upgradeRange } from "./actions"
 import { transferToPlayer } from "./actions/transfer";
 import { vote } from "./actions/vote";
 import { Game, MoveEvent, ShootEvent, UpgradeEvent, VoteEvent } from "./interfaces"
+import { gameStore } from "../stores/gameStore";
+import { selfStore } from "../stores/selfStore"
 
 export async function createSocket(game: Game, map: HTMLElement) {
     const socket = new WebSocket('ws://'
@@ -16,7 +18,7 @@ export async function createSocket(game: Game, map: HTMLElement) {
         const event = message.event;
         const data = message.data;
         
-        game = message.new_game_data;
+        gameStore.set(message.new_game_data);
         
         switch (event) {
             case 'move':
@@ -42,6 +44,8 @@ export async function createSocket(game: Game, map: HTMLElement) {
                 console.log(voteEvent);
                 await vote(voteEvent);
                 break;
+            case 'new_ad':
+                location.reload();
         };
     }
 

@@ -15,20 +15,6 @@ function waitForStaticLoad(element: HTMLImageElement) {
     return new Promise(resolve => element.onload = resolve);
 }
 
-function parseReviver(key, value) {
-    if (typeof value === 'string' && key == "guild_id") {
-        return BigInt(value);
-    }
-    return value;
-}
-
-export async function fetchGame(url: string) {
-    const response = await fetch(url)
-
-    // come on JS, go home. You're drunk
-
-    return JSON.parse(await response.text(), parseReviver)
-}
 function drawGrid(map: HTMLElement, game: Game) {
     for (var i = 0; i <= game.grid_size_y; i++) {
 

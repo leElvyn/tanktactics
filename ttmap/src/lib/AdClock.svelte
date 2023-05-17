@@ -11,7 +11,6 @@
 
  
 	function CountDownTimer(end: number) {
-        console.log(end)
 
 		let _second = 1000;
 		let _minute = _second * 60;
@@ -21,9 +20,7 @@
 
 		function showRemaining() {
 			let now = new Date().getTime();
-            console.log(now)
 			let distance = end - now;
-            console.log(distance)
 			if (distance < 0) {
 				clearInterval(timer);
 				return;

@@ -318,10 +318,11 @@ class Player(models.Model):
         self.save()
         player.save()
         
-        event = VoteEvent(game=Game, voting_player=self, receiving_player=player)
+        game = self.game_set.first()
+        event = VoteEvent(game=self.game_set.first(), voting_player=self, receiving_player=player)
         event.save()
 
-        reply = {"vote_number": Player.objects.filter(ad_vote=player).count()}
+        reply = {"vote_number": Player.objects.filter(ad_vote=player).count(), "game": map.serializers.GameSerializer(game, self)}
 
         broadcast_event(
             self.game_set.all().first(),
