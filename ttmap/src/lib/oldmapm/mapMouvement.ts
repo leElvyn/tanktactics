@@ -1,6 +1,6 @@
 export async function registerGestures(mapDiv: HTMLElement) {
     map = mapDiv;
-    mapcontainer = map.parentElement!;
+    mapcontainer = map.parentElement;
     dragElement(map);
     mobileDragElement(map);
     map.style.transform = "scale(1.01)";
@@ -30,7 +30,7 @@ function dragElement(elmnt: HTMLElement) {
     document.body.onmousedown = dragMouseDown;
 
     function dragMouseDown(e: MouseEvent) {
-        if (document.getElementById("sidebarElement")!.getAttribute("hovered") == "false") {
+        if (document.getElementById("sidebarElement").getAttribute("hovered") == "false") {
         e.preventDefault();
         // get the mouse cursor position at startup:
         pos3 = e.clientX;
@@ -107,7 +107,7 @@ function mobileDragElement(elmnt: HTMLElement) {
 }
 
 function wheelEvent(event: WheelEvent) {
-    if (document.getElementById("sidebarElement")!.getAttribute("hovered") == "false") {
+    if (document.getElementById("sidebarElement").getAttribute("hovered") == "false") {
         event.preventDefault();
         event.stopPropagation();
         zoom(event.deltaY, event.clientX, event.clientY);

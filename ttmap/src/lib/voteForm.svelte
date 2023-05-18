@@ -4,7 +4,7 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import { get } from 'svelte/store';
 	import { gameStore } from './stores/gameStore';
-	import type { Game } from './map/interfaces';
+	import type { Game } from './interfaces';
 	import { getCookie } from './utils';
 
 	export let voteSelectVisible;

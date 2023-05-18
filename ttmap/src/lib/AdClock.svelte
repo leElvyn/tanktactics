@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Game } from './map/interfaces';
+	import type { Game } from './interfaces';
 	import { gameStore } from './stores/gameStore';
 
 	let game = $gameStore;

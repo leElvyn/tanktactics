@@ -2,7 +2,7 @@
 	import ActionList from './actionList.svelte';
 	import { slide } from 'svelte/transition';
 	import Stats from './stats.svelte';
-	import type { Game } from './map/interfaces';
+	import type { Game } from './interfaces';
 	import { gameStore } from './stores/gameStore';
 	import { onMount } from 'svelte';
 	import { selfStore } from './stores/selfStore';

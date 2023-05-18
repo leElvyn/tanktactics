@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import AdClock from './AdClock.svelte';
-	import type { Game } from './map/interfaces';
+	import type { Game } from './interfaces';
+	
+	import { gamePromise } from './stores/gameStore';
 
-	export let gamePromise: Promise<Game>;
 </script>
 
 <AppBar>

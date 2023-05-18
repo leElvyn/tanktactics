@@ -1,24 +1,16 @@
 <script lang="ts">
 	import Map from '$lib/map/Map.svelte';
 	import Sidebar from '$lib/Sidebar.svelte';
-
 	import Header from '$lib/Header.svelte';
 
 	import { Modal, AppShell, AppBar } from '@skeletonlabs/skeleton';
+
 	import { gameStore } from '$lib/stores/gameStore';
-	import type { Game } from '$lib/map/interfaces';
+	import { gamePromise } from '$lib/stores/gameStore';
+	import type { Game } from '$lib/interfaces';
 	import { onMount } from 'svelte';
 	import { playerId, setPlayerId } from '$lib/consts';
 
-	let promiseResolve: (value: Game) => void;
-	let gamePromise = new Promise<Game>((executor) => {
-		promiseResolve = executor;
-	});
-	gameStore.subscribe((game) => {
-		if (game !== undefined) {
-			promiseResolve(game);
-		}
-	});
 
 	function parseReviver(key: string, value: unknown) {
 		if (typeof value === 'string' && key == 'guild_id') {
@@ -45,7 +37,7 @@
 <Modal />
 <AppShell>
 	<svelte:fragment slot="header">
-		<Header bind:gamePromise />
+		<Header />
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
 		{#await gamePromise then game}
