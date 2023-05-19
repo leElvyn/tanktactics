@@ -182,7 +182,7 @@ OIDC_OP_AUTHORIZATION_ENDPOINT = "https://sso.prologin.eu/realms/finale/protocol
 OIDC_RP_SIGN_ALGO="RS256"
 OIDC_OP_JWKS_ENDPOINT="https://sso.prologin.eu/realms/finale/protocol/openid-connect/certs"
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/map/1"
 LOGOUT_REDIRECT_URL = "https://localhost/"
 # Admin Reorder
 

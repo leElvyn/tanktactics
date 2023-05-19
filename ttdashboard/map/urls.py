@@ -26,7 +26,6 @@ urlpatterns = [
     path('api/guild/<int:guild_id>/players/<id:player_id>/upgrade', views.upgrade_player),
     path('api/guild/<int:guild_id>/players/<id:player_id>/vote', views.vote_player),
     path('api/guild/<int:guild_id>/create', views.create_game),
-    path('api/guild/<int:guild_id>/logs', logviews.LogsViewSet.as_view({"get": "list"})),
     path('guild/<int:guild_id>', views.public_map),
     path('map/guild/<int:guild_id>', views.private_map),
     path('', views.redirect_map)

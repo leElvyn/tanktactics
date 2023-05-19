@@ -33,7 +33,7 @@ export function movePlayer(event: MoveEvent) {
         });
         anime({
             targets: "#range_" + position_string,
-            top: (event.position.x + move_y - event.player.tank.range) * TILE_SIZE,
+            top: (event.position.y + move_y - event.player.tank.range) * TILE_SIZE,
             duration: 1000,
             easing: "easeInOutSine"
         });

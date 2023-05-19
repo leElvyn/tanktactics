@@ -266,6 +266,7 @@ class Player(models.Model):
         reply = {
             "new_offender_ap": self.tank.action_points,
             "new_defender_ap": defensive_player.tank.action_points,
+            "ap_amount": number_of_ap_to_shoot
         }
         
         broadcast_event(
@@ -274,6 +275,7 @@ class Player(models.Model):
             {
                 "offensive_player": map.serializers.PlayerSerializer(self).data,
                 "defensive_player": map.serializers.PlayerSerializer(defensive_player).data,
+                "ap_amount": number_of_ap_to_shoot
             },
         )
         return reply
@@ -414,7 +416,7 @@ class Game(models.Model):
 
         tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
         broadcast_event(
-            self.game_set.all().first(),
+            self,
             "new_ad",
             {
             },

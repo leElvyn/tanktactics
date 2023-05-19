@@ -10,7 +10,7 @@
 	import { selfStore } from '$lib/stores/selfStore';
 
 	let game: Game = get(gameStore)!;
-	let self: Player = get(selfStore)!;
+	let self: Player = $selfStore!;
 
 	gameStore.subscribe((value) => {
 		game = value!;
@@ -78,9 +78,7 @@
 				Math.abs(self.tank.x - player.tank.x),
 				Math.abs(self.tank.y - player.tank.y)
 			);
-			if (distance <= player.tank.range && distance != 0) {
-				console.log(distance);
-				console.log(player);
+			if (distance <= self.tank.range && distance != 0) {
 				// != 0 to exclude ourself
 				playerList.push({ label: player.name, value: player.id });
 			}

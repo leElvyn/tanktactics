@@ -2,14 +2,12 @@
 import type { MoveEvent, UpgradeEvent } from "../interfaces";
 import { TILE_SIZE } from "$lib/consts";
 import anime from "animejs"
-import { notifyMe } from "$lib/notifications";
 
 export async function upgradeRange(event: UpgradeEvent) {
     let position_string = event.player.tank.x + "_" + event.player.tank.y
     let playerCanvas = <HTMLCanvasElement> document.getElementById("player_" + position_string);
     let rangeDiv = document.getElementById("range_" + position_string);
     
-    notifyMe(`${event.player.name} just upgraded their range.\n${event.player.name} now has a ${event.new_range} tiles range.`)
 
     setTimeout(() => {
         // redrawPlayer(playerCanvas.getContext("2d"), event.player);

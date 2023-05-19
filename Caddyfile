@@ -13,7 +13,7 @@
                 file_server
         }
 
-        redir / /map/1 
+        redir / /oidc/authenticate
 
         handle /map* {
                 reverse_proxy map:3000

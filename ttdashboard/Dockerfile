@@ -3,6 +3,7 @@ ENV PYTHONUNBUFFERED=1
 ENV DB_ENGINE=postgre
 WORKDIR /code
 COPY requirements.txt /code/
+RUN apk add tk
 RUN pip install -r requirements.txt
 COPY . /code/
 VOLUME /code/static

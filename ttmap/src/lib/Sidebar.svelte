@@ -6,7 +6,7 @@
 	import { gameStore } from './stores/gameStore';
 	import { onMount } from 'svelte';
 	import { selfStore } from './stores/selfStore';
-	import Chat from './chat/Chat.svelte';
+	import Logs from './logs/Logs.svelte';
 
 	let game = $gameStore;
 	let self = $selfStore;
@@ -37,5 +37,5 @@
 		<ActionList />
 	{/if}
 
-	<Chat/>
+	<Logs/>
 </div>

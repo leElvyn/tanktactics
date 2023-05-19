@@ -35,7 +35,7 @@
 				Math.abs(self.tank.x - player.tank.x),
 				Math.abs(self.tank.y - player.tank.y)
 			);
-			if (distance <= player.tank.range && distance != 0) {
+			if (distance <= self.tank.range && distance != 0) {
 				console.log(distance)
 				console.log(player)
 				// != 0 to exclude ourself

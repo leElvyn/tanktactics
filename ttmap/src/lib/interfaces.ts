@@ -54,7 +54,8 @@ export interface MoveEvent {
 
 export interface ShootEvent {
     offensive_player: Player,
-    defensive_player: Player 
+    defensive_player: Player,
+    ap_amount: number
 }
 
 export interface UpgradeEvent {
