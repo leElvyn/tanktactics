@@ -44,12 +44,12 @@
 
 <div class="actions-list flex-col items-center flex w-[70%]">
     <div class="flex flex-row justify-evenly w-full">
-	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Move)}}>Move</button>
-	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Shoot)}}>Shoot</button>
+	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Move)}}>Se déplacer</button>
+	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Shoot)}}>Attaquer</button>
     </div>
     <div class="flex flex-row justify-evenly w-full">
-	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Transfer)}}>Transfer</button>
-	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Upgrade)}}>Upgrade</button>
+	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Transfer)}}>Transférer</button>
+	    <button class="action-button btn variant-filled" disabled={self?.tank.action_points == 0} type="button" on:click={() => {assignVisible(Selected.Upgrade)}}>Améliorer</button>
     </div>
 
     {#if selected == Selected.Move}
@@ -68,6 +68,6 @@
 
 <style>
 	.action-button {
-		@apply mt-4 w-20;
+		@apply mt-4 w-24;
 	}
 </style>

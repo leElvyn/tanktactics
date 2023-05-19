@@ -17,7 +17,6 @@ export async function createSocket(game: Game) {
         const event = message.event;
         const data = message.data;
 
-        console.log(message.new_game_data)
         gameStore.set(message.new_game_data);
 
         switch (event) {
@@ -44,7 +43,7 @@ export async function createSocket(game: Game) {
             case 'vote':
                 let voteEvent: VoteEvent = data;
                 await vote(voteEvent);
-                addMessage(`${voteEvent.voting_player.name} vient de voter pour ${voteEvent.receiving_player.name}. ${voteEvent.receiving_player.name} a reçu ${voteEvent.receiving_player.vote_received} votes.`)
+                addMessage(`${voteEvent.voting_player.name} vient de voter pour ${voteEvent.receiving_player.name}. Votes : ${voteEvent.receiving_player.vote_received}.`)
                 break;
             case 'new_ad':
                 // all we need to do is set the game

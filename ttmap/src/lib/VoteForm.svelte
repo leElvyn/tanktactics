@@ -66,12 +66,12 @@
 			type="search"
 			name="autocomplete-search"
 			bind:value={playerVoteInput}
-			placeholder="Search alive players ..."
+			placeholder="Rechercher un joueur en vie ..."
 			on:input={() => (playerVoteId = '')}
 			on:submit={vote}
 		/>
 		<button class="variant-filled-secondary" disabled={playerVoteId === ''} on:click={vote}
-			>Vote</button
+			>Voter</button
 		>
 	</div>
 	<div data-popup="popupAutocomplete" class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto">
@@ -79,6 +79,7 @@
 			bind:input={playerVoteInput}
 			options={playerList}
 			on:selection={onPopupDemoSelect}
+			emptyState="Aucun joueur n'a été trouvé."
 		/>
 	</div>
 </div>

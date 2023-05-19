@@ -73,7 +73,6 @@ def validate_new_game(game_dict):
 
 ### Players
 
-
 class PlayerList(APIView):
     permission_classes = [IsAuthenticated]
 

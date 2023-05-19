@@ -50,12 +50,12 @@
 	{:else}
 		<div class="flex justify-center w-full">
 			{#if self.ad_vote}
-				You voted for : {self.ad_vote?.name}
+				Vote : {self.ad_vote?.name}
 			{:else if !voteSelectVisible}
 				<button
 					class="action-button btn variant-filled"
 					type="button"
-					on:click={() => (voteSelectVisible = true)}>Vote</button
+					on:click={() => (voteSelectVisible = true)}>Voter</button
 				>
 			{:else}
 				<VoteForm bind:voteSelectVisible />

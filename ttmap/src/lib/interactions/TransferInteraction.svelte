@@ -118,6 +118,7 @@
 			bind:input={selectedPlayerInput}
 			options={playerList}
 			on:selection={onPopupDemoSelect}
+			emptyState="Aucun joueur n'a été trouvé."
 		/>
 	</div>
 </div>

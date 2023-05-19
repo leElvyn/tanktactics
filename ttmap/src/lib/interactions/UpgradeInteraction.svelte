@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Player } from '$lib/interfaces';
+	import Player from '$lib/map/Player.svelte';
 	import { selfStore } from '$lib/stores/selfStore';
 	import { getCookie } from '$lib/utils';
 	import { scale } from 'svelte/transition';
@@ -34,7 +35,7 @@
 </script>
 
 <div class="mt-4 card p-3 flex flex-col grow-2" transition:scale>
-	<button class="variant-filled-secondary p-3 mx-10 rounded-lg flex items-center"
+	<button class="variant-filled-secondary p-3 mx-10 rounded-lg flex items-center" disabled={self.tank.action_points < cost}
 		on:click={upgrade}
 		><span class="inline-block pb-1">Améliorer : &nbsp;</span>
 		<span class="bg-green-500 rounded-full h-6 w-6 inline-block text-center">

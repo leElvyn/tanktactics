@@ -76,12 +76,12 @@
 			type="search"
 			name="autocomplete-search"
 			bind:value={selectedPlayerInput}
-			placeholder="Search players in range ..."
+			placeholder="Rechercher un joeur à portée ..."
 			on:input={() => (selectedPlayerId = '')}
 			on:submit={attack}
 		/>
 		<button class="variant-filled-secondary" disabled={selectedPlayerId === ''} on:click={attack}
-			>Attack</button
+			>Attaquer</button
 		>
 	</div>
 	<div data-popup="popupAutocomplete" class="card w-full max-w-sm max-h-48 p-4 overflow-y-auto">
@@ -89,6 +89,7 @@
 			bind:input={selectedPlayerInput}
 			options={playerList}
 			on:selection={onPopupDemoSelect}
+			emptyState="Aucun joueur n'a été trouvé."
 		/>
 	</div>
 </div>

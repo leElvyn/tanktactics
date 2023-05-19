@@ -41,5 +41,5 @@
 </script>
 
 <div class="font-bold text-2xl">
-    <span>Next Action Hour in : </span><span class="w-80 inline-block">{minutes} minutes and {seconds} seconds.</span>
+    <span>Prochain point d'action dans : </span><span class="w-80 inline-block">{minutes} minutes et {seconds} secondes.</span>
 </div>
