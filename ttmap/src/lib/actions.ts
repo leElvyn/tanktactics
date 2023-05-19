@@ -1,4 +1,5 @@
-
 export { movePlayer } from "./actions/move";
-export { shootPlayer } from "./actions/shoot";
+export { attackPlayer } from "./actions/attack";
 export { upgradeRange } from "./actions/upgrade";
+export { transferToPlayer } from "./actions/transfer"
+export { vote } from "./actions/vote"

@@ -1,10 +1,3 @@
-export async function registerInteractions(map : HTMLElement) {
-    let players = document.getElementsByClassName("player-canvas")
-    for (let player of players) {
-        player.addEventListener("mouseenter", canvasMouseEnter);
-        player.addEventListener("mouseout", canvasMouseOut);
-    }
-}
 
 function canvasMouseEnter(event: Event) {
     event = event as MouseEvent;

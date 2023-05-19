@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("map.urls")),
     path('auth/v1/', include("auth.urls")),
-    path('', include('social_django.urls', namespace='social'))
+    path('oidc/', include('mozilla_django_oidc.urls')), 
 #    path('oauth/', include("oauth.urls")),
 ]

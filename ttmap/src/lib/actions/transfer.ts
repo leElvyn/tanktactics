@@ -1,9 +1,8 @@
-import anime, { speed } from "animejs";
+import anime from "animejs";
 import type { ShootEvent } from "$lib/interfaces";
 
 
 export async function transferToPlayer(event: ShootEvent) {
-    console.log(event)
     // off = offensive player
     // def = defending player
     
@@ -38,7 +37,7 @@ export async function transferToPlayer(event: ShootEvent) {
     projectile.style.zIndex = "5";
     projectile.style.transform = `rotate(${angle}rad)`;
 
-    projectile.style.backgroundColor = "red";
+    projectile.style.backgroundColor = "green";
 
     let map = document.getElementById("map");
     map!.appendChild(projectile);

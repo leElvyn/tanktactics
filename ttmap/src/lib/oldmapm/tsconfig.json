@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-      "target": "es2020",
-      "module": "es2020",
-      "sourceMap": false,
-      "allowSyntheticDefaultImports": true,
-      "outDir": "./../ttdashboard/map/static/map/map_static",
-    }
-}

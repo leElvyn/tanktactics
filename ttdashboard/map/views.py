@@ -71,6 +71,8 @@ def validate_new_game(game_dict):
 
 ################## VIEWS #####################
 
+### Players
+
 
 class PlayerList(APIView):
     permission_classes = [IsAuthenticated]
@@ -307,7 +309,7 @@ def upgrade_player(request, guild_id, player_id):
     """
     Upgrade the player
     Settings :
-        upgrade_size : int
+        No settings
     """
     game = Game.objects.filter(guild_id=guild_id).order_by("-game_start_date").first()
     if not game.is_started:

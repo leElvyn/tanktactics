@@ -30,6 +30,8 @@ services:
       - POSTGRES_USER=ttdev
       - POSTGRES_PASSWORD=ttdev
       - POSTGRES_HOST=db
+      - OIDC_RP_CLIENT_ID=tactics
+      - OIDC_RP_CLIENT_SECRET=0aqczgkeetVYjuAMfqx9WT5bmAjR3qQu
   
   map:
     build: ./ttmap

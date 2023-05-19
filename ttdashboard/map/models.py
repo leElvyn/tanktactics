@@ -1,12 +1,12 @@
 from math import e
 from django.db import models
-from django.db.models.fields import related
 from django.utils.translation import gettext as _
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 from django.http import Http404
+from model_utils.managers import InheritanceManager
 
 from rest_framework.exceptions import APIException
 
@@ -37,6 +37,7 @@ class BaseEvent(models.Model):
     id = models.BigIntegerField(primary_key=True)
     game = models.ForeignKey("Game", on_delete=models.CASCADE, verbose_name=_("Game"))
     date = models.DateTimeField(verbose_name=_("Date"), auto_now=True)
+    logs = InheritanceManager()
 
 
 class MoveEvent(BaseEvent):
@@ -141,6 +142,7 @@ class Player(models.Model):
     def move(self, x, y):
         position_x = self.tank.x
         position_y = self.tank.y
+        print(x, y)
 
         if self.is_dead:
             raise BadRequestException(_("Player is dead"))
@@ -150,11 +152,11 @@ class Player(models.Model):
 
         game_object = self.game_set.all().first()
 
-        if abs(x) > game_object.grid_size_x or abs(y) > game_object.grid_size_y:
+        if abs(x) >= game_object.grid_size_x or abs(y) >= game_object.grid_size_y or x < 0 or y < 0:
             raise BadRequestException(_("Player is outside the map"))
 
         if (
-            Tank.objects.filter(player__game=game_object,x=x, y=y).count()
+            Tank.objects.filter(player__game=game_object, player__is_dead=False, x=x, y=y).count()
             > 0
         ):
             # the 1 is you
@@ -163,7 +165,7 @@ class Player(models.Model):
         if self.tank.action_points <= 0:
             raise BadRequestException(_("Player does not have enough action points"))
 
-        MoveEvent.objects.create(
+        MoveEvent(
             player=self,
             game=game_object,
             new_x=x,
@@ -211,7 +213,7 @@ class Player(models.Model):
                 self.game_set.all().first().finish_game()
             reply["defensive_player_dead"] = True
 
-        event = ShootEvent.objects.create(
+        event = ShootEvent(
             game=self.game_set.first(),
             offensive_player=self,
             defensive_player=defensive_player,
@@ -232,7 +234,6 @@ class Player(models.Model):
                 "defensive_player": map.serializers.PlayerSerializer(defensive_player).data,
             },
         )
-
         return reply
 
     def shoot_ap(self, defensive_player, number_of_ap_to_shoot):
@@ -269,16 +270,19 @@ class Player(models.Model):
         
         broadcast_event(
             self.game_set.all().first(),
-            "upgrade",
+            "transfer",
             {
-                "player": map.serializers.PlayerSerializer(self).data,
-                "new_range": self.tank.range
+                "offensive_player": map.serializers.PlayerSerializer(self).data,
+                "defensive_player": map.serializers.PlayerSerializer(defensive_player).data,
             },
         )
         return reply
 
     def upgrade_range(self):
-        upgrade_cost = self.tank.range - 1
+        upgrade_cost = 1
+        for i in range(1, self.tank.range):
+            upgrade_cost += i * 2
+
         if self.tank.action_points < upgrade_cost:
             raise BadRequestException(_("Player does not have enough action points"))
         self.tank.action_points -= upgrade_cost
@@ -330,7 +334,6 @@ class Player(models.Model):
             {
                 "voting_player": map.serializers.PlayerSerializer(self).data,
                 "receiving_player": map.serializers.PlayerSerializer(player).data,
-                "new_range": self.tank.range
             },
         )
 
@@ -408,7 +411,14 @@ class Game(models.Model):
                 player.tank.save()
             player.save()
         self.save()
+
         tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
+        broadcast_event(
+            self.game_set.all().first(),
+            "new_ad",
+            {
+            },
+        )
 
     def start_game(self):
         self.next_ad_end = self.game_start_date + datetime.timedelta(
@@ -424,8 +434,8 @@ class Game(models.Model):
         positions = {} 
         for i in range(len(self.players.all())):
             while True:
-                x = random.randint(0, grid_size_x)
-                y = random.randint(0, grid_size_y)
+                x = random.randint(0, grid_size_x - 1)
+                y = random.randint(0, grid_size_y - 1)
                 if positions.get(str(x) + "-"+ str(y)):
                     continue
                 else:

@@ -30,7 +30,8 @@ function dragElement(elmnt: HTMLElement) {
     document.body.onmousedown = dragMouseDown;
 
     function dragMouseDown(e: MouseEvent) {
-        if (document.getElementById("sidebarElement")!.getAttribute("hovered") == "false") {
+        let sidebar = document.getElementById("sidebarElement")
+        if (!sidebar || sidebar.getAttribute("hovered") == "false") {
         e.preventDefault();
         // get the mouse cursor position at startup:
         pos3 = e.clientX;
@@ -107,7 +108,8 @@ function mobileDragElement(elmnt: HTMLElement) {
 }
 
 function wheelEvent(event: WheelEvent) {
-    if (document.getElementById("sidebarElement")!.getAttribute("hovered") == "false") {
+    let sidebar =document.getElementById("sidebarElement");
+    if (!sidebar || sidebar.getAttribute("hovered") == "false") {
         event.preventDefault();
         event.stopPropagation();
         zoom(event.deltaY, event.clientX, event.clientY);

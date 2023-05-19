@@ -1,11 +1,12 @@
 <script lang="ts">
-	import ActionList from './actionList.svelte';
+	import ActionList from './ActionList.svelte';
 	import { slide } from 'svelte/transition';
-	import Stats from './stats.svelte';
+	import Stats from './Stats.svelte';
 	import type { Game } from './interfaces';
 	import { gameStore } from './stores/gameStore';
 	import { onMount } from 'svelte';
 	import { selfStore } from './stores/selfStore';
+	import Chat from './chat/Chat.svelte';
 
 	let game = $gameStore;
 	let self = $selfStore;
@@ -35,4 +36,6 @@
 	{#if !self?.is_dead}
 		<ActionList />
 	{/if}
+
+	<Chat/>
 </div>

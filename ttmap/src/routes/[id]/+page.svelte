@@ -11,7 +11,6 @@
 	import { onMount } from 'svelte';
 	import { playerId, setPlayerId } from '$lib/consts';
 
-
 	function parseReviver(key: string, value: unknown) {
 		if (typeof value === 'string' && key == 'guild_id') {
 			return BigInt(value);
@@ -28,7 +27,9 @@
 		let gameID = window.location.pathname.split('/')[2];
 		let url = '/api/guild/' + gameID;
 		fetchGame(url).then((game: Game) => {
-			setPlayerId(game.self.id);
+			if (game.self) {
+				setPlayerId(game.self.id);
+			}
 			gameStore.set(game);
 		});
 	});
@@ -41,7 +42,9 @@
 	</svelte:fragment>
 	<svelte:fragment slot="sidebarRight">
 		{#await gamePromise then game}
-			<Sidebar />
+			{#if game.self}
+				<Sidebar />
+			{/if}
 		{/await}
 	</svelte:fragment>
 	<Map />

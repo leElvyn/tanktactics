@@ -1,15 +1,17 @@
-import { TILE_SIZE } from "./mapMain"
 
-export function focusMap(map: HTMLElement, grid_size_x: number, grid_size_y: number) {
-    document.getElementById("background").style.background = "#333333"
-    // @ts-ignored
-    let focusObj = JSON.parse(focus);
-    let focusCanvas = document.getElementById("player_" + focusObj.x + "_" + focusObj.y)
+interface Focus {
+    x: number,
+    y: number,
+    range: number,
+}
 
-    let bodyRect = document.getElementById("background").getBoundingClientRect();
-    map.style.transform = `scale(${calculateScale(grid_size_x, grid_size_y, focusObj.range)})`
+export function focusMap(map: HTMLElement, grid_size_x: number, grid_size_y: number, focus: Focus) {
+    let focusCanvas = document.getElementById("player_" + focus.x + "_" + focus.y)
 
-    let playerRect = focusCanvas.getBoundingClientRect();
+    let bodyRect = document.getElementById("body")!.getBoundingClientRect();
+    map.style.transform = `scale(${calculateScale(grid_size_x, grid_size_y, focus.range)})`
+
+    let playerRect = focusCanvas!.getBoundingClientRect();
 
     let pageCenterX = bodyRect.width / 2
     let pageCenterY = bodyRect.height / 2
@@ -35,6 +37,6 @@ export function focusMap(map: HTMLElement, grid_size_x: number, grid_size_y: num
 
 }
 
-function calculateScale(grid_size_x, grid_size_y, range) {
+function calculateScale(grid_size_x: number, grid_size_y: number, range: number) {
     return (6.5 - Math.sqrt(range)) / 3;
 }

@@ -29,7 +29,8 @@ class ClientConsumer(AsyncWebsocketConsumer):
     async def shoot(self, event):
         await self.send(text_data=json.dumps({
             'event': 'shoot',
-            'data': event['data']
+            'data': event['data'],
+            'new_game_data': event["new_game_data"]
         }))
 
     async def move(self, event):        
@@ -63,6 +64,5 @@ class ClientConsumer(AsyncWebsocketConsumer):
     async def new_ad(self, event):
         await self.send(text_data=json.dumps({
             'event': 'new_ad',
-            'data': event['data'],
             'new_game_data': event["new_game_data"]
         }))

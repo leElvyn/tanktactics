@@ -1,11 +1,9 @@
-import { movePlayer, shootPlayer, upgradeRange } from "./actions"
-import { transferToPlayer } from "./actions/transfer";
-import { vote } from "./actions/vote";
+import { movePlayer, attackPlayer, upgradeRange, transferToPlayer, vote} from "./actions"
 import type { Game, MoveEvent, ShootEvent, UpgradeEvent, VoteEvent } from "./interfaces"
 import { gameStore } from "./stores/gameStore";
 import { selfStore } from "./stores/selfStore"
 
-export async function createSocket(game: Game, map: HTMLElement) {
+export async function createSocket(game: Game) {
     const socket = new WebSocket('ws://'
         + window.location.host
         + '/ws/game/'
@@ -18,6 +16,7 @@ export async function createSocket(game: Game, map: HTMLElement) {
         const event = message.event;
         const data = message.data;
         
+        console.log(message.new_game_data)
         gameStore.set(message.new_game_data);
         
         switch (event) {
@@ -27,25 +26,23 @@ export async function createSocket(game: Game, map: HTMLElement) {
                 break;
             case 'shoot':
                 let shootEvent: ShootEvent = data;
-                shootPlayer(shootEvent);
+                attackPlayer(shootEvent);
                 break;
             case 'upgrade':
                 let upgradeEvent: UpgradeEvent = data;
-                console.log(upgradeEvent);
                 upgradeRange(upgradeEvent);
                 break;
             case 'transfer':
                 let transferEvent: ShootEvent = data;
-                console.log(transferEvent);
                 await transferToPlayer(transferEvent);
                 break;
             case 'vote':
                 let voteEvent: VoteEvent = data;
-                console.log(voteEvent);
                 await vote(voteEvent);
                 break;
             case 'new_ad':
-                location.reload();
+                // all we need to do is set the game
+                break;
         };
     }
 

@@ -1,10 +1,8 @@
-import anime, { speed } from "../anime";
-import { ShootEvent } from "../interfaces";
-import { redrawPlayer } from "../mapDrawing";
+import anime from "animejs";
+import type { ShootEvent } from "../interfaces";
 
 
-export async function transferToPlayer(event: ShootEvent) {
-    console.log(event)
+export async function attackPlayer(event: ShootEvent) {
     // off = offensive player
     // def = defending player
     
@@ -28,9 +26,8 @@ export async function transferToPlayer(event: ShootEvent) {
 
     let projectile = document.createElement("div");
     projectile.id = "proj_" + offPosition;
-    projectile.style.width = "10px";
+    projectile.style.width = "5px";
     projectile.style.height = "10px";
-    projectile.style.borderRadius = "50%";
     
     projectile.style.left = offCanvasCenter[0] + "px";
     projectile.style.top = offCanvasCenter[1] + "px";
@@ -40,11 +37,8 @@ export async function transferToPlayer(event: ShootEvent) {
     projectile.style.transform = `rotate(${angle}rad)`;
 
     projectile.style.backgroundColor = "red";
-
     let map = document.getElementById("map");
-    map.appendChild(projectile);
-
-    redrawPlayer(offCanvas.getContext("2d"), event.offensive_player);
+    map!.appendChild(projectile);
 
     await anime({
         targets: projectile,
@@ -66,8 +60,8 @@ export async function transferToPlayer(event: ShootEvent) {
 
     hurtOverlay.style.zIndex = "20"
 
-    hurtOverlay.style.backgroundColor = "green";
-    map.appendChild(hurtOverlay);
+    hurtOverlay.style.backgroundColor = "red";
+    map!.appendChild(hurtOverlay);
 
 
     await anime({
@@ -79,6 +73,11 @@ export async function transferToPlayer(event: ShootEvent) {
         easing: "linear",
     }).finished;
     hurtOverlay.remove();
+
+    if (event.defensive_player.tank.health_points == 0) {
+        defCanvas.remove();
+        defRangeDiv?.remove();
+    } 
     
-    redrawPlayer(defCanvas.getContext("2d"), event.defensive_player);
+    // redrawPlayer(defCanvas.getContext("2d"), event.defensive_player);
 }

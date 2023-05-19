@@ -41,13 +41,13 @@ export interface Game {
 
 export interface MoveEvent {
     direction: {
-        x: string,
-        y: string
+        x: number,
+        y: number
     },
 
     position: {
-        x: string,
-        y: string
+        x: number,
+        y: number
     },
     player: Player
 }

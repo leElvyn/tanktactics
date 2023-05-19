@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "social_django",
     "admin_reorder",
+    "mozilla_django_oidc",
 ]
 
 MIDDLEWARE = [
@@ -168,8 +169,21 @@ REST_FRAMEWORK = {
 AUTHENTICATION_BACKENDS = [
     "auth.backends.ProloginOpenId",
     "django.contrib.auth.backends.ModelBackend",
+    'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
 ]
 
+OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
+OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
+
+OIDC_OP_USER_ENDPOINT = "https://sso.prologin.eu/realms/finale/protocol/openid-connect/userinfo"
+OIDC_OP_TOKEN_ENDPOINT = "https://sso.prologin.eu/realms/finale/protocol/openid-connect/token"
+OIDC_OP_AUTHORIZATION_ENDPOINT = "https://sso.prologin.eu/realms/finale/protocol/openid-connect/auth"
+
+OIDC_RP_SIGN_ALGO="RS256"
+OIDC_OP_JWKS_ENDPOINT="https://sso.prologin.eu/realms/finale/protocol/openid-connect/certs"
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "https://localhost/"
 # Admin Reorder
 
 ADMIN_REORDER = (

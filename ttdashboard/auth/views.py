@@ -25,11 +25,12 @@ def get_self(request: HttpRequest):
     return JsonResponse(response)
 
 def autologin(request: HttpRequest):
+    return
     if not settings.DEBUG:
         print("WHAT TF YOU'RE RUNNING THIS IN PROD")
         sys.exit(1)
     user = User.objects.get(username=request.GET["user"])
-    print(user.profiles)
+    print(user.player_set)
     login(request, user, "django.contrib.auth.backends.ModelBackend")
     print(user)
     

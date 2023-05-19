@@ -42,8 +42,21 @@ class GameSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     def __init__(self, instance=None, **kwargs):
-        self.Meta.model = instance.__class__
+
+        if type(instance) is list:
+            self.Meta.model = instance[0].__class__
+        else:
+            self.Meta.model = instance.__class__
+
         super().__init__(instance, **kwargs)
+
+    def to_representation(self, instance):
+        print(self.fields)
+        print(instance._meta.get_fields())
+        self.fields = dict(instance._meta.fields)
+        self.Meta.fields = dict(instance._meta.fields)
+        return super().to_representation(instance)
 
     class Meta:
         model = None
+        fields = '__all__'

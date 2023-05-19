@@ -6,6 +6,7 @@
 	import { gameStore } from './stores/gameStore';
 	import type { Game } from './interfaces';
 	import { getCookie } from './utils';
+	import Player from './map/Player.svelte';
 
 	export let voteSelectVisible;
 
@@ -22,17 +23,15 @@
 		middleware: {}
 	};
 
-	const playerList: AutocompleteOption[] = [];
-	const playerNamesList: string[] = [];
+	let playerList: AutocompleteOption[] = [];
 
 	$: {
+		playerList = [];
 		game.players.forEach((player) => {
 			if (!player.is_dead) {
 				playerList.push({ label: player.name, value: player.id });
-				playerNamesList.push(player.name);
 			}
 		});
-		console.log(playerNamesList);
 	}
 
 	let playerVoteInput: string = '';
@@ -43,7 +42,6 @@
 		playerVoteId = event.detail.value;
 	}
 	async function vote() {
-		console.log(playerVoteId);
 		let res = await fetch('/api/guild/1/players/@me/vote', {
 			method: 'POST',
 			headers: { 
@@ -58,20 +56,19 @@
 		let data = await res.json();
 		gameStore.set(data.game);
 		voteSelectVisible = false;
-		console.log(data);
 	}
 </script>
 
 <div class="text-token w-full max-w-sm space-y-2">
-	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
+	<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]" use:popup={popupSettings}>
 		<input
 			class="input autocomplete"
 			type="search"
 			name="autocomplete-search"
 			bind:value={playerVoteInput}
 			placeholder="Search alive players ..."
-			use:popup={popupSettings}
 			on:input={() => (playerVoteId = '')}
+			on:submit={vote}
 		/>
 		<button class="variant-filled-secondary" disabled={playerVoteId === ''} on:click={vote}
 			>Vote</button
