@@ -318,7 +318,6 @@ class Player(models.Model):
 
         self.ad_vote = player
         player.vote_received += 1
-        print(player.vote_received)
         self.save()
 
         if Player.objects.filter(ad_vote=player).count() == player.next_vote_target:
