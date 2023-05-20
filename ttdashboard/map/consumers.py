@@ -62,7 +62,9 @@ class ClientConsumer(AsyncWebsocketConsumer):
         }))
     
     async def new_ad(self, event):
+        print(event)
         await self.send(text_data=json.dumps({
             'event': 'new_ad',
+            "data": event["data"],
             'new_game_data': event["new_game_data"]
         }))

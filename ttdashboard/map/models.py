@@ -135,6 +135,8 @@ class Player(models.Model):
         blank=True,
     )  # If the player is dead, vote for the curent action day
 
+    next_vote_target = models.IntegerField(default=3)
+
     player_color = models.CharField(
         _("Player's color, in format 'rgb(x, x, x)'"), max_length=18
     )
@@ -142,7 +144,6 @@ class Player(models.Model):
     def move(self, x, y):
         position_x = self.tank.x
         position_y = self.tank.y
-        print(x, y)
 
         if self.is_dead:
             raise BadRequestException(_("Player is dead"))
@@ -317,8 +318,11 @@ class Player(models.Model):
 
         self.ad_vote = player
         player.vote_received += 1
+        print(player.vote_received)
         self.save()
-        if Player.objects.filter(ad_vote=player).count() == 3:
+
+        if Player.objects.filter(ad_vote=player).count() == player.next_vote_target:
+            player.next_vote_target *= 3
             player.tank.action_points += 1
             player.tank.save()
         self.save()
@@ -402,6 +406,7 @@ class Game(models.Model):
     game_start_date = models.DateTimeField(verbose_name=_("Game start"))
 
     def new_action_day(self):
+        print("AD")
         self.next_ad_end += datetime.timedelta(minutes=self.ad_duration)
         for player in self.players.all():
             player:Player = player
@@ -414,13 +419,15 @@ class Game(models.Model):
             player.save()
         self.save()
 
-        tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
+        print("ADagain")
         broadcast_event(
             self,
             "new_ad",
             {
+                'next_ad': self.next_ad_end
             },
         )
+        tasks.next_action_day(game_id = self.id, schedule = self.next_ad_end)
 
     def start_game(self):
         self.next_ad_end = self.game_start_date + datetime.timedelta(

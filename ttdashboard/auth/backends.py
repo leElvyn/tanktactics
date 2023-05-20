@@ -11,7 +11,6 @@ class ProloginOpenId(OpenIdAuth):
 
     def get_user_details(self, response):
         """Generate username from identity url"""
-        print(response)
         values = super(ProloginOpenId, self).get_user_details(response)
         values['username'] = values.get('username') or \
                              urlparse.urlsplit(response.identity_url)\

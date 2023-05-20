@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Player } from '$lib/interfaces';
-	import Player from '$lib/map/Player.svelte';
 	import { selfStore } from '$lib/stores/selfStore';
 	import { getCookie } from '$lib/utils';
 	import { scale } from 'svelte/transition';

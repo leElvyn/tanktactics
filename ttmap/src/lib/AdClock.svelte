@@ -3,6 +3,7 @@
 	import { gameStore } from './stores/gameStore';
 
 	let game = $gameStore;
+	gameStore.subscribe((value) => {game = value})
 
     let days: number;
     let hours: number;
@@ -23,6 +24,7 @@
 			let distance = end - now;
 			if (distance < 0) {
 				clearInterval(timer);
+				
 				return;
 			}
 			days = Math.floor(distance / _day);

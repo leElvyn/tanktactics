@@ -17,6 +17,7 @@ export async function createSocket(game: Game) {
         const event = message.event;
         const data = message.data;
 
+        console.log(message)
         gameStore.set(message.new_game_data);
 
         switch (event) {
@@ -52,6 +53,7 @@ export async function createSocket(game: Game) {
     }
 
     socket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
+        console.error('Chat socket closed unexpectedly, attempting to reconnect');
+        setTimeout(() => {createSocket(game)}, 5000)
     };
 }
